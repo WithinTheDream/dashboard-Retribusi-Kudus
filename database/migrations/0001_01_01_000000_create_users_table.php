@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('no_hp');
             $table->string('password');
+            $table->string('role')->default('user');
             $table->timestamps();
         });
     }
