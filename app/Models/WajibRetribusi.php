@@ -2,44 +2,47 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WajibRetribusi extends Model
 {
-    protected $fillable = [
-        'kode',
-        'nama_lengkap',
-        'nik',
-        'nama_usaha',
-        'alamat',
-        'rt',
-        'rw',
-        'kecamatan_id',
-        'desa_id',
-        'lokasi_long',
-        'lat',
-        'no_hp',
-        'jenis_retribusi_id',
-        'nib',
-        'dokumen_nib',
-        'npwp',
-        'dokumen_npwp',
-        'status_pengajuan',
-    ];
+    use HasFactory;
 
-    public function kecamatan(): BelongsTo
+    protected $guarded = ['id'];
+
+    public function pengajuan()
+    {
+        return $this->belongsTo(PengajuanWajibRetribusi::class, 'pengajuan_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function kecamatan()
     {
         return $this->belongsTo(Kecamatan::class);
     }
 
-    public function desa(): BelongsTo
+    public function desa()
     {
         return $this->belongsTo(Desa::class);
     }
 
-    public function jenisRetribusi(): BelongsTo
+    public function jenisRetribusi()
     {
         return $this->belongsTo(JenisRetribusi::class);
+    }
+
+    public function tagihans()
+    {
+        return $this->hasMany(Tagihan::class, 'wajib_retribusi_id');
+    }
+
+    public function kunjungan()
+    {
+        return $this->hasMany(KunjunganPenagihan::class, 'wajib_retribusi_id');
     }
 }

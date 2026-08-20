@@ -1,230 +1,40 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.admin')
 
-    <title>
-        @yield('title', 'Dashboard Admin')
-    </title>
+@section('title', 'Dashboard - Retribusi Kudus')
+@section('page-title', 'Dashboard Utama')
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
-
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 250px;
-            background: #111827;
-            color: white;
-            padding: 20px;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-
-        .menu-title {
-            font-size: 12px;
-            color: #9ca3af;
-            margin: 20px 0 10px;
-            text-transform: uppercase;
-        }
-
-        .menu a {
-            display: block;
-            color: #d1d5db;
-            text-decoration: none;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-        }
-
-        .menu a:hover,
-        .menu a.active {
-            background: #2563eb;
-            color: white;
-        }
-
-        .main {
-            flex: 1;
-        }
-
-        .navbar {
-            height: 70px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 25px;
-        }
-
-        .content {
-            padding: 25px;
-        }
-
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logout button {
-            border: none;
-            background: #ef4444;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .logout button:hover {
-            background: #dc2626;
-        }
-    </style>
-
-    @stack('styles')
-</head>
-
-<body>
-
-<div class="layout">
-
-    <aside class="sidebar">
-
-        <div class="logo">
-            Retribusi Kudus
-        </div>
-
-        <div class="menu">
-
-            <div class="menu-title">
-                Utama
-            </div>
-
-            <a href="{{ route('admin.dashboard') }}">
-                Dashboard
-            </a>
-
-            <div class="menu-title">
-                Data Master
-            </div>
-
-            <a href="#">
-                Wilayah
-            </a>
-
-            <a href="#">
-                Jenis Retribusi
-            </a>
-
-            <a href="#">
-                Tarif
-            </a>
-
-            <div class="menu-title">
-                Operasional
-            </div>
-
-            <a href="#">
-                Wajib Retribusi
-            </a>
-
-            <a href="#">
-                Pengajuan
-            </a>
-
-            <a href="#">
-                Tagihan
-            </a>
-
-            <a href="#">
-                Pembayaran
-            </a>
-
-            <div class="menu-title">
-                Laporan
-            </div>
-
-            <a href="#">
-                Laporan
-            </a>
-
-            <div class="menu-title">
-                Sistem
-            </div>
-
-            <a href="#">
-                Pengguna
-            </a>
-
-        </div>
-
-    </aside>
-
-    <div class="main">
-
-        <nav class="navbar">
-
-            <div>
-                <strong>
-                    @yield('page-title', 'Dashboard')
-                </strong>
-            </div>
-
-            <div class="profile">
-
-                <span>
-                    {{ auth()->user()->nama_lengkap }}
-                </span>
-
-                <span>
-                    ({{ auth()->user()->role }})
-                </span>
-
-                <form
-                    action="{{ route('logout') }}"
-                    method="POST"
-                    class="logout"
-                >
-                    @csrf
-
-                    <button type="submit">
-                        Logout
-                    </button>
-                </form>
-
-            </div>
-
-        </nav>
-
-        <main class="content">
-
-            @yield('content')
-
-        </main>
-
+@section('content')
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px;">
+    <!-- Pengajuan Menunggu -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #f59e0b;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0 0 5px 0;">Pengajuan Menunggu</p>
+        <h2 style="font-size: 24px; font-weight: bold; color: #111827; margin: 0;">{{ $totalPengajuan }}</h2>
     </div>
 
+    <!-- Total Wajib Retribusi -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #2563eb;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0 0 5px 0;">Wajib Retribusi Aktif</p>
+        <h2 style="font-size: 24px; font-weight: bold; color: #111827; margin: 0;">{{ $totalWargaAktif }}</h2>
+    </div>
+
+    <!-- Tagihan Belum Bayar -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #ef4444;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0 0 5px 0;">Tagihan Belum Bayar</p>
+        <h2 style="font-size: 24px; font-weight: bold; color: #111827; margin: 0;">{{ $totalTagihanBelumBayar }}</h2>
+    </div>
+
+    <!-- Total Realisasi Pendapatan -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #10b981;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0 0 5px 0;">Total Pendapatan</p>
+        <h2 style="font-size: 22px; font-weight: bold; color: #111827; margin: 0;">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h2>
+    </div>
 </div>
 
-@stack('scripts')
-
-</body>
-</html>
+<!-- Banner Selamat Datang / Ringkasan -->
+<div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 8px;">Selamat Datang di Panel Retribusi Sampah Kudus</h3>
+    <p style="color: #4b5563; margin: 0; font-size: 14px; line-height: 1.5;">
+        Kelola data pengajuan, tarif, wajib retribusi, dan verifikasi pembayaran melalui menu navigasi di bilah sebelah kiri.
+    </p>
+</div>
+@endsection

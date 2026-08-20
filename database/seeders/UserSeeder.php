@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -12,36 +13,36 @@ class UserSeeder extends Seeder
         User::create([
             'nama_lengkap' => 'Administrator',
             'username' => 'admin',
-            'email' => 'admin@retribusikudas.test',
+            'email' => 'admin@retribusikudus.test',
             'no_hp' => '081234567890',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
 
         User::create([
             'nama_lengkap' => 'User Demo',
             'username' => 'user',
-            'email' => 'user@retribusikudas.test',
+            'email' => 'user@retribusikudus.test',
             'no_hp' => '081234567891',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'user',
         ]);
 
         User::create([
             'nama_lengkap' => 'Petugas Demo',
             'username' => 'petugas',
-            'email' => 'petugas@retribusikudas.test',
+            'email' => 'petugas@retribusikudus.test',
             'no_hp' => '081234567892',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'petugas',
         ]);
 
         User::create([
             'nama_lengkap' => 'Bendahara Demo',
             'username' => 'bendahara',
-            'email' => 'bendahara@retribusikudas.test',
+            'email' => 'bendahara@retribusikudus.test',
             'no_hp' => '081234567893',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'bendahara',
         ]);
     }

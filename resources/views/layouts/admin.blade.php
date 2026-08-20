@@ -126,7 +126,7 @@
                 Data Master
             </div>
 
-            <a href="#">
+            <a href="{{ route('admin.wilayah.index') }}">
                 Wilayah
             </a>
 
@@ -134,7 +134,7 @@
                 Jenis Retribusi
             </a>
 
-            <a href="#">
+            <a href="{{ route('admin.tarif.index') }}">
                 Tarif
             </a>
 
@@ -142,19 +142,19 @@
                 Operasional
             </div>
 
-            <a href="#">
+            <a href="{{ route('admin.wajib-retribusi.index') }}">
                 Wajib Retribusi
             </a>
 
-            <a href="#">
+            <a href="{{ route('admin.pengajuan.index') }}">
                 Pengajuan
             </a>
 
-            <a href="#">
+            <a href="{{ route('admin.tagihan.index') }}">
                 Tagihan
             </a>
 
-            <a href="#">
+            <a href="{{ route('admin.pembayaran.index') }}">
                 Pembayaran
             </a>
 
@@ -162,7 +162,7 @@
                 Laporan
             </div>
 
-            <a href="#">
+            <a href="{{ route('admin.laporan.index') }}">
                 Laporan
             </a>
 
@@ -170,7 +170,7 @@
                 Sistem
             </div>
 
-            <a href="#">
+            <a href="{{ route('admin.pengguna.index') }}">
                 Pengguna
             </a>
 

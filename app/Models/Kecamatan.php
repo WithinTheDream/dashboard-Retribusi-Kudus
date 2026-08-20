@@ -2,22 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Kecamatan extends Model
 {
-    protected $fillable = [
-        'kecamatan',
-    ];
+    use HasFactory;
 
-    public function desas(): HasMany
-    {
-        return $this->hasMany(Desa::class, 'kec_id');
-    }
+    protected $table = 'kecamatans';
+    protected $fillable = ['kecamatan'];
 
-    public function wajibRetribusi(): HasMany
+    public function desas()
     {
-        return $this->hasMany(WajibRetribusi::class);
+        return $this->hasMany(Desa::class, 'kec_id', 'id');
     }
 }
