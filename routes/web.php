@@ -17,6 +17,9 @@ use App\Http\Controllers\Admin\PenggunaController;
 Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
 
+Route::get('/captcha-image', [AuthController::class, 'generateCaptcha'])
+    ->name('captcha.image');
+
 Route::post('/login', [AuthController::class, 'login'])
     ->name('login.process');
 
