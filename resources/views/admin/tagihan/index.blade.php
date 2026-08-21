@@ -7,10 +7,21 @@
 <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Tagihan Retribusi</h3>
+        
+        <div>
+            @if(auth()->user()->hasPermission('tagihan.create'))
+            <form action="{{ route('admin.tagihan.generate') }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin meng-generate tagihan bulan ini untuk semua pelanggan aktif?');">
+                @csrf
+                <button type="submit" style="background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; border: none; font-size: 14px; cursor: pointer; margin-right: 10px;">
+                    Generate Tagihan Bulanan
+                </button>
+            </form>
 
-        <a href="{{ route('admin.tagihan.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
-            + Tambah
-        </a>
+            <a href="{{ route('admin.tagihan.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+                + Tambah
+            </a>
+            @endif
+        </div>
     </div>
 
     @if(session('success'))
@@ -57,10 +68,13 @@
                         @endif
                     </td>
                     <td style="padding: 12px; text-align: center;">
+                        @if(auth()->user()->hasPermission('tagihan.update'))
                         <a href="{{ route('admin.tagihan.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">
                             Edit
                         </a>
+                        @endif
 
+                        @if(auth()->user()->hasPermission('tagihan.delete'))
                         <form action="{{ route('admin.tagihan.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tagihan ini?');">
                             @csrf
                             @method('DELETE')
@@ -68,6 +82,7 @@
                                 Hapus
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @empty

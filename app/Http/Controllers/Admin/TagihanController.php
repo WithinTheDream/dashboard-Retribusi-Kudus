@@ -12,6 +12,7 @@ class TagihanController extends Controller
 {
     public function index()
     {
+        abort_if(!auth()->user()->hasPermission('tagihan.view'), 403);
         $tagihans = Tagihan::with('wajibRetribusi')
             ->latest()
             ->paginate(10);
@@ -19,8 +20,19 @@ class TagihanController extends Controller
         return view('admin.tagihan.index', compact('tagihans'));
     }
 
+    public function generate(Request $request)
+    {
+        abort_if(!auth()->user()->hasPermission('tagihan.create'), 403);
+        // Memanggil console command
+        \Illuminate\Support\Facades\Artisan::call('tagihan:generate');
+
+        return redirect()->route('admin.tagihan.index')
+            ->with('success', 'Berhasil menjalankan proses generate tagihan bulanan. Output: ' . \Illuminate\Support\Facades\Artisan::output());
+    }
+
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('tagihan.create'), 403);
         $wajibRetribusis = WajibRetribusi::all();
 
         return view('admin.tagihan.create', compact('wajibRetribusis'));
@@ -28,6 +40,7 @@ class TagihanController extends Controller
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->hasPermission('tagihan.create'), 403);
         $validated = $request->validate([
             'nomor_tagihan' => [
                 'required', 'string', 'max:255',
@@ -49,6 +62,7 @@ class TagihanController extends Controller
 
     public function edit(Tagihan $tagihan)
     {
+        abort_if(!auth()->user()->hasPermission('tagihan.update'), 403);
         $wajibRetribusis = WajibRetribusi::all();
 
         return view('admin.tagihan.edit', compact(
@@ -58,6 +72,7 @@ class TagihanController extends Controller
 
     public function update(Request $request, Tagihan $tagihan)
     {
+        abort_if(!auth()->user()->hasPermission('tagihan.update'), 403);
         $validated = $request->validate([
             'nomor_tagihan' => [
                 'required', 'string', 'max:255',
@@ -80,6 +95,7 @@ class TagihanController extends Controller
 
     public function destroy(Tagihan $tagihan)
     {
+        abort_if(!auth()->user()->hasPermission('tagihan.delete'), 403);
         if ($tagihan->pembayaran()->exists()) {
             return back()->with(
                 'error',

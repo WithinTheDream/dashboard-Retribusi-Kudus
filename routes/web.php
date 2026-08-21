@@ -71,6 +71,7 @@ Route::middleware(['auth', 'admin'])
         )->except(['show']);
 
         // 5. Data Operasional: Tagihan
+        Route::post('tagihan/generate', [TagihanController::class, 'generate'])->name('tagihan.generate');
         Route::resource(
             'tagihan',
             TagihanController::class

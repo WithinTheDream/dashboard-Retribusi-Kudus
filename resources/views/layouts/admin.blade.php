@@ -241,7 +241,7 @@
 
     </div>
 
-</div>
+</div> 
 
 @stack('scripts')
 

@@ -6,3 +6,8 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+use Illuminate\Support\Facades\Schedule;
+
+// Jadwalkan generate tagihan setiap tanggal 1 jam 00:00
+Schedule::command('tagihan:generate')->monthlyOn(1, '00:00');
