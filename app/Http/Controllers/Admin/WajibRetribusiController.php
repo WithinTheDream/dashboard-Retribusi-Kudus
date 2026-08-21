@@ -16,6 +16,7 @@ class WajibRetribusiController extends Controller
 {
     public function index()
     {
+        abort_if(!auth()->user()->hasPermission('wajib_retribusi.view'), 403);
         $wajibRetribusis = WajibRetribusi::with(['kecamatan', 'desa', 'jenisRetribusi'])
             ->latest()
             ->paginate(10);
@@ -25,6 +26,7 @@ class WajibRetribusiController extends Controller
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('wajib_retribusi.create'), 403);
         $jenisRetribusis = JenisRetribusi::all();
         $kecamatans = Kecamatan::all();
         $desas = collect();
@@ -36,6 +38,7 @@ class WajibRetribusiController extends Controller
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->hasPermission('wajib_retribusi.create'), 403);
         $validated = $request->validate([
             'kode' => ['required', 'string', 'max:255', 'unique:wajib_retribusis,kode'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
@@ -87,6 +90,7 @@ class WajibRetribusiController extends Controller
 
     public function show(WajibRetribusi $wajibRetribusi)
     {
+        abort_if(!auth()->user()->hasPermission('wajib_retribusi.view'), 403);
         $wajibRetribusi->load(['kecamatan', 'desa', 'jenisRetribusi', 'tagihans', 'pengajuan']);
 
         return view('admin.wajib-retribusi.show', compact('wajibRetribusi'));
@@ -94,6 +98,7 @@ class WajibRetribusiController extends Controller
 
     public function edit(WajibRetribusi $wajibRetribusi)
     {
+        abort_if(!auth()->user()->hasPermission('wajib_retribusi.update'), 403);
         $jenisRetribusis = JenisRetribusi::all();
         $kecamatans = Kecamatan::all();
         $desas = Desa::where('kec_id', $wajibRetribusi->kecamatan_id)->get();
@@ -105,6 +110,7 @@ class WajibRetribusiController extends Controller
 
     public function update(Request $request, WajibRetribusi $wajibRetribusi)
     {
+        abort_if(!auth()->user()->hasPermission('wajib_retribusi.update'), 403);
         $validated = $request->validate([
             'kode' => [
                 'required', 'string', 'max:255',
@@ -135,6 +141,7 @@ class WajibRetribusiController extends Controller
 
     public function destroy(WajibRetribusi $wajibRetribusi)
     {
+        abort_if(!auth()->user()->hasPermission('wajib_retribusi.delete'), 403);
         if ($wajibRetribusi->tagihans()->exists()) {
             return back()->with(
                 'error',

@@ -7,9 +7,11 @@
 <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Kecamatan dan Desa di Kabupaten Kudus</h3>
+        @if(auth()->user()->hasPermission('wilayah.create'))
         <a href="{{ route('admin.wilayah.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
             + Tambah Kecamatan
         </a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -42,12 +44,16 @@
                         @endif
                     </td>
                     <td style="padding: 12px; text-align: center;">
+                        @if(auth()->user()->hasPermission('wilayah.update'))
                         <a href="{{ route('admin.wilayah.edit', $item->id) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">Edit</a>
+                        @endif
+                        @if(auth()->user()->hasPermission('wilayah.delete'))
                         <form action="{{ route('admin.wilayah.destroy', $item->id) }}" method="POST" style="display: inline-block;" onsubmit="return confirm('Yakin ingin menghapus kecamatan ini?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; padding: 0;">Hapus</button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @empty

@@ -7,10 +7,11 @@
 <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Tarif Berdasarkan Jenis Objek</h3>
-
+        @if(auth()->user()->hasPermission('tarif.create'))
         <a href="{{ route('admin.tarif.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
             + Tambah Tarif
         </a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -39,10 +40,13 @@
                         Rp {{ number_format($item->nominal, 0, ',', '.') }}
                     </td>
                     <td style="padding: 12px; text-align: center;">
+                        @if(auth()->user()->hasPermission('tarif.update'))
                         <a href="{{ route('admin.tarif.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">
                             Edit
                         </a>
+                        @endif
 
+                        @if(auth()->user()->hasPermission('tarif.delete'))
                         <form action="{{ route('admin.tarif.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus tarif ini?');">
                             @csrf
                             @method('DELETE')
@@ -50,6 +54,7 @@
                                 Hapus
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach

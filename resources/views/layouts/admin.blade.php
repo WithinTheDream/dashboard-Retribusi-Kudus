@@ -118,6 +118,7 @@
                 Utama
             </div>
 
+            <!-- Dashboard biasanya bisa diakses semua level admin, jadi tidak perlu dibungkus permission spesifik -->
             <a href="{{ route('admin.dashboard') }}">
                 Dashboard
             </a>
@@ -126,53 +127,71 @@
                 Data Master
             </div>
 
-            <a href="{{ route('admin.wilayah.index') }}">
-                Wilayah
-            </a>
+            @if(auth()->user()->hasPermission('wilayah.view'))
+                <a href="{{ route('admin.wilayah.index') }}">
+                    Wilayah
+                </a>
+            @endif
 
-            <a href="{{ route('admin.jenis-retribusi.index') }}">
-                Jenis Retribusi
-            </a>
+            @if(auth()->user()->hasPermission('jenis_retribusi.view'))
+                <a href="{{ route('admin.jenis-retribusi.index') }}">
+                    Jenis Retribusi
+                </a>
+            @endif
 
-            <a href="{{ route('admin.tarif.index') }}">
-                Tarif
-            </a>
+            @if(auth()->user()->hasPermission('tarif.view'))
+                <a href="{{ route('admin.tarif.index') }}">
+                    Tarif
+                </a>
+            @endif
 
             <div class="menu-title">
                 Operasional
             </div>
 
-            <a href="{{ route('admin.wajib-retribusi.index') }}">
-                Wajib Retribusi
-            </a>
+            @if(auth()->user()->hasPermission('wajib_retribusi.view'))
+                <a href="{{ route('admin.wajib-retribusi.index') }}">
+                    Wajib Retribusi
+                </a>
+            @endif
 
-            <a href="{{ route('admin.pengajuan.index') }}">
-                Pengajuan
-            </a>
+            @if(auth()->user()->hasPermission('pengajuan.view'))
+                <a href="{{ route('admin.pengajuan.index') }}">
+                    Pengajuan
+                </a>
+            @endif
 
-            <a href="{{ route('admin.tagihan.index') }}">
-                Tagihan
-            </a>
+            @if(auth()->user()->hasPermission('tagihan.view'))
+                <a href="{{ route('admin.tagihan.index') }}">
+                    Tagihan
+                </a>
+            @endif
 
-            <a href="{{ route('admin.pembayaran.index') }}">
-                Pembayaran
-            </a>
+            @if(auth()->user()->hasPermission('pembayaran.view'))
+                <a href="{{ route('admin.pembayaran.index') }}">
+                    Pembayaran
+                </a>
+            @endif
 
             <div class="menu-title">
                 Laporan
             </div>
 
-            <a href="{{ route('admin.laporan.index') }}">
-                Laporan
-            </a>
+            @if(auth()->user()->hasPermission('laporan.view'))
+                <a href="{{ route('admin.laporan.index') }}">
+                    Laporan
+                </a>
+            @endif
 
             <div class="menu-title">
                 Sistem
             </div>
 
-            <a href="{{ route('admin.pengguna.index') }}">
-                Pengguna
-            </a>
+            @if(auth()->user()->hasPermission('users.view'))
+                <a href="{{ route('admin.pengguna.index') }}">
+                    Pengguna
+                </a>
+            @endif
 
         </div>
 

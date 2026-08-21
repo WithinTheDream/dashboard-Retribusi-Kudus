@@ -11,6 +11,7 @@ class JenisRetribusiController extends Controller
 {
     public function index()
     {
+        abort_if(!auth()->user()->hasPermission('jenis_retribusi.view'), 403);
         $jenisRetribusi = JenisRetribusi::latest()->paginate(10);
 
         return view('admin.jenis-retribusi.index', compact(
@@ -20,11 +21,13 @@ class JenisRetribusiController extends Controller
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('jenis_retribusi.create'), 403);
         return view('admin.jenis-retribusi.create');
     }
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->hasPermission('jenis_retribusi.create'), 403);
         $validated = $request->validate([
             'kode' => ['required', 'string', 'max:255', 'unique:jenis_retribusis,kode'],
             'nama' => ['required', 'string', 'max:255'],
@@ -39,6 +42,7 @@ class JenisRetribusiController extends Controller
 
     public function edit(JenisRetribusi $jenisRetribusi)
     {
+        abort_if(!auth()->user()->hasPermission('jenis_retribusi.update'), 403);
         return view('admin.jenis-retribusi.edit', compact(
             'jenisRetribusi'
         ));
@@ -48,6 +52,7 @@ class JenisRetribusiController extends Controller
         Request $request,
         JenisRetribusi $jenisRetribusi
     ) {
+        abort_if(!auth()->user()->hasPermission('jenis_retribusi.update'), 403);
         $validated = $request->validate([
             'kode' => [
                 'required',
@@ -68,6 +73,7 @@ class JenisRetribusiController extends Controller
 
     public function destroy(JenisRetribusi $jenisRetribusi)
     {
+        abort_if(!auth()->user()->hasPermission('jenis_retribusi.delete'), 403);
         if ($jenisRetribusi->tarifs()->exists()) {
             return back()->with(
                 'error',

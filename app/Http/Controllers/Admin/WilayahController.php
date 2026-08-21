@@ -10,17 +10,20 @@ class WilayahController extends Controller
 {
     public function index()
     {
+        abort_if(!auth()->user()->hasPermission('wilayah.view'), 403);
         $kecamatan = Kecamatan::with('desas')->get();
         return view('admin.wilayah.index', compact('kecamatan'));
     }
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('wilayah.create'), 403);
         return view('admin.wilayah.create');
     }
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->hasPermission('wilayah.create'), 403);
         $request->validate([
             'kecamatan' => 'required|string|max:255',
         ]);
@@ -34,12 +37,14 @@ class WilayahController extends Controller
 
     public function edit($id)
     {
+        abort_if(!auth()->user()->hasPermission('wilayah.update'), 403);
         $kecamatan = Kecamatan::findOrFail($id);
         return view('admin.wilayah.edit', compact('kecamatan'));
     }
 
     public function update(Request $request, $id)
     {
+        abort_if(!auth()->user()->hasPermission('wilayah.update'), 403);
         $request->validate([
             'kecamatan' => 'required|string|max:255',
         ]);
@@ -54,6 +59,7 @@ class WilayahController extends Controller
 
     public function destroy($id)
     {
+        abort_if(!auth()->user()->hasPermission('wilayah.delete'), 403);
         $kecamatan = Kecamatan::findOrFail($id);
         $kecamatan->delete();
 

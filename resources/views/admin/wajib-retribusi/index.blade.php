@@ -7,10 +7,11 @@
 <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Wajib Retribusi</h3>
-
+        @if(auth()->user()->hasPermission('wajib_retribusi.create'))
         <a href="{{ route('admin.wajib-retribusi.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
             + Tambah
         </a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -55,14 +56,21 @@
                         @endif
                     </td>
                     <td style="padding: 12px; text-align: center;">
+                        @if(auth()->user()->hasPermission('wajib_retribusi.view'))
                         <a href="{{ route('admin.wajib-retribusi.show', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 12px; font-weight: 500;">Detail</a>
-                        <a href="{{ route('admin.wajib-retribusi.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">Edit</a>
+                        @endif
 
+                        @if(auth()->user()->hasPermission('wajib_retribusi.update'))
+                        <a href="{{ route('admin.wajib-retribusi.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">Edit</a>
+                        @endif
+
+                        @if(auth()->user()->hasPermission('wajib_retribusi.delete'))
                         <form action="{{ route('admin.wajib-retribusi.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; font-size: 14px;">Hapus</button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @empty
