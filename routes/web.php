@@ -77,11 +77,17 @@ Route::middleware(['auth', 'admin'])
             TagihanController::class
         )->except(['show']);
 
-        // 6. Data Operasional: Pembayaran
+        // 6. Data Operasional: Pembayaran & Setoran
         Route::resource(
             'pembayaran',
             PembayaranController::class
         )->except(['show']);
+
+        Route::post('setoran/{setoran}/verify', [\App\Http\Controllers\Admin\SetoranController::class, 'verify'])->name('setoran.verify');
+        Route::resource(
+            'setoran',
+            \App\Http\Controllers\Admin\SetoranController::class
+        )->only(['index', 'show']);
 
         // 7. Laporan: Rekap Tagihan & Pembayaran
         Route::get(
@@ -89,10 +95,15 @@ Route::middleware(['auth', 'admin'])
             [LaporanController::class, 'index']
         )->name('laporan.index');
 
-        // 8. Sistem: Pengguna
+        // 8. Sistem: Pengguna & Role
         Route::resource(
             'pengguna',
             PenggunaController::class
+        )->except(['show']);
+
+        Route::resource(
+            'roles',
+            \App\Http\Controllers\Admin\RoleController::class
         )->except(['show']);
 
 });

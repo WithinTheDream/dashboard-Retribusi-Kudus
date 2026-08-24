@@ -173,6 +173,12 @@
                 </a>
             @endif
 
+            @if(auth()->user()->hasPermission('setoran.view'))
+                <a href="{{ route('admin.setoran.index') }}">
+                    Setoran Petugas
+                </a>
+            @endif
+
             <div class="menu-title">
                 Laporan
             </div>
@@ -190,6 +196,12 @@
             @if(auth()->user()->hasPermission('users.view'))
                 <a href="{{ route('admin.pengguna.index') }}">
                     Pengguna
+                </a>
+            @endif
+
+            @if(auth()->user()->hasPermission('roles.view'))
+                <a href="{{ route('admin.roles.index') }}">
+                    Role & Hak Akses
                 </a>
             @endif
 

@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'nama_lengkap',
@@ -76,6 +77,9 @@ class User extends Authenticatable
     }
     public function hasPermission(string $permission): bool
     {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
         return $this->roleRelation?->hasPermission($permission) ?? false;
     }
     public function hasRole(string $role): bool

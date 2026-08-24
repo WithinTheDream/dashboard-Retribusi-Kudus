@@ -48,6 +48,8 @@ class PengajuanController extends Controller
             'alamat' => ['required', 'string'],
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
+            'lat' => ['nullable', 'string'],
+            'lokasi_long' => ['nullable', 'string'],
             'no_hp' => ['required', 'string', 'max:20'],
             'status_pengajuan' => [
                 'required', 'in:menunggu,perbaikan,survey,ditolak,disetujui',
@@ -93,6 +95,8 @@ class PengajuanController extends Controller
             'alamat' => ['required', 'string'],
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
+            'lat' => ['nullable', 'string'],
+            'lokasi_long' => ['nullable', 'string'],
             'no_hp' => ['required', 'string', 'max:20'],
             'status_pengajuan' => [
                 'required', 'in:menunggu,perbaikan,survey,ditolak,disetujui',
@@ -101,6 +105,30 @@ class PengajuanController extends Controller
         ]);
 
         $pengajuan->update($validated);
+
+        // Jika disetujui, otomatis buat data Wajib Retribusi jika belum ada
+        if ($validated['status_pengajuan'] === 'disetujui') {
+            \App\Models\WajibRetribusi::firstOrCreate(
+                ['pengajuan_id' => $pengajuan->id],
+                [
+                    'kode' => 'WR-' . date('Ym') . str_pad($pengajuan->id, 4, '0', STR_PAD_LEFT),
+                    'user_id' => $pengajuan->user_id,
+                    'nik' => $pengajuan->nik,
+                    'nama_lengkap' => $pengajuan->nama_lengkap,
+                    'nama_usaha' => $pengajuan->nama_usaha,
+                    'kecamatan_id' => $pengajuan->kecamatan_id,
+                    'desa_id' => $pengajuan->desa_id,
+                    'alamat' => $pengajuan->alamat,
+                    'rt' => $pengajuan->rt,
+                    'rw' => $pengajuan->rw,
+                    'lokasi_long' => $pengajuan->lokasi_long,
+                    'lat' => $pengajuan->lat,
+                    'no_hp' => $pengajuan->no_hp,
+                    'jenis_retribusi_id' => $pengajuan->jenis_retribusi_id,
+                    'status_aktif' => true,
+                ]
+            );
+        }
 
         return redirect()
             ->route('admin.pengajuan.index')
