@@ -68,7 +68,7 @@ Route::middleware(['auth', 'admin'])
         Route::resource(
             'pengajuan',
             PengajuanController::class
-        )->except(['show']);
+        );
 
         // 5. Data Operasional: Tagihan
         Route::post('tagihan/generate', [TagihanController::class, 'generate'])->name('tagihan.generate');
@@ -81,7 +81,7 @@ Route::middleware(['auth', 'admin'])
         Route::resource(
             'pembayaran',
             PembayaranController::class
-        )->except(['show']);
+        );
 
         // 7. Laporan: Rekap Tagihan & Pembayaran
         Route::get(

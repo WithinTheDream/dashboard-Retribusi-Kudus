@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PengajuanWajibRetribusi;
+use App\Models\WajibRetribusi;
 use App\Models\JenisRetribusi;
 use App\Models\Kecamatan;
 use App\Models\Desa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class PengajuanController extends Controller
 {
@@ -56,11 +58,44 @@ class PengajuanController extends Controller
 
         $validated['user_id'] = auth()->id() ?? 1;
 
-        PengajuanWajibRetribusi::create($validated);
+        DB::transaction(function () use ($validated) {
+            $pengajuan = PengajuanWajibRetribusi::create($validated);
+
+            // Jika status langsung 'disetujui', buat entri Wajib Retribusi
+            if ($validated['status_pengajuan'] === 'disetujui') {
+                $kodeWR = 'WR-' . date('Ym') . '-' . str_pad($pengajuan->id, 4, '0', STR_PAD_LEFT);
+                WajibRetribusi::firstOrCreate(
+                    ['pengajuan_id' => $pengajuan->id],
+                    [
+                        'kode'               => $kodeWR,
+                        'user_id'            => $pengajuan->user_id,
+                        'jenis_retribusi_id' => $pengajuan->jenis_retribusi_id,
+                        'nik'                => $pengajuan->nik,
+                        'nama_lengkap'       => $pengajuan->nama_lengkap,
+                        'nama_usaha'         => $pengajuan->nama_usaha,
+                        'kecamatan_id'       => $pengajuan->kecamatan_id,
+                        'desa_id'            => $pengajuan->desa_id,
+                        'alamat'             => $pengajuan->alamat,
+                        'rt'                 => $pengajuan->rt,
+                        'rw'                 => $pengajuan->rw,
+                        'no_hp'              => $pengajuan->no_hp,
+                        'status_aktif'       => true,
+                    ]
+                );
+            }
+        });
 
         return redirect()
             ->route('admin.pengajuan.index')
             ->with('success', 'Data pengajuan berhasil ditambahkan.');
+    }
+
+    public function show(PengajuanWajibRetribusi $pengajuan)
+    {
+        // Telah disesuaikan tanpa relasi dokumenPengajuans yang belum ada
+        $pengajuan->load(['kecamatan', 'desa', 'jenisRetribusi', 'user']);
+
+        return view('admin.pengajuan.show', compact('pengajuan'));
     }
 
     public function edit(PengajuanWajibRetribusi $pengajuan)
@@ -74,10 +109,8 @@ class PengajuanController extends Controller
         ));
     }
 
-    public function update(
-        Request $request,
-        PengajuanWajibRetribusi $pengajuan
-    ) {
+    public function update(Request $request, PengajuanWajibRetribusi $pengajuan)
+    {
         $validated = $request->validate([
             'nomor_pengajuan' => [
                 'required', 'string', 'max:255',
@@ -100,7 +133,32 @@ class PengajuanController extends Controller
             'catatan_admin' => ['nullable', 'string'],
         ]);
 
-        $pengajuan->update($validated);
+        DB::transaction(function () use ($validated, $pengajuan) {
+            $pengajuan->update($validated);
+
+            // Jika status diubah menjadi 'disetujui', buat record Wajib Retribusi otomatis
+            if ($validated['status_pengajuan'] === 'disetujui') {
+                $kodeWR = 'WR-' . date('Ym') . '-' . str_pad($pengajuan->id, 4, '0', STR_PAD_LEFT);
+                WajibRetribusi::firstOrCreate(
+                    ['pengajuan_id' => $pengajuan->id],
+                    [
+                        'kode'               => $kodeWR,
+                        'user_id'            => $pengajuan->user_id,
+                        'jenis_retribusi_id' => $pengajuan->jenis_retribusi_id,
+                        'nik'                => $pengajuan->nik,
+                        'nama_lengkap'       => $pengajuan->nama_lengkap,
+                        'nama_usaha'         => $pengajuan->nama_usaha,
+                        'kecamatan_id'       => $pengajuan->kecamatan_id,
+                        'desa_id'            => $pengajuan->desa_id,
+                        'alamat'             => $pengajuan->alamat,
+                        'rt'                 => $pengajuan->rt,
+                        'rw'                 => $pengajuan->rw,
+                        'no_hp'              => $pengajuan->no_hp,
+                        'status_aktif'       => true,
+                    ]
+                );
+            }
+        });
 
         return redirect()
             ->route('admin.pengajuan.index')

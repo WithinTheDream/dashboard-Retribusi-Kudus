@@ -22,7 +22,9 @@ class PembayaranController extends Controller
     public function create()
     {
         $tagihans = Tagihan::where('status', '!=', 'lunas')
+            ->orWhereNull('status')
             ->with('wajibRetribusi')
+            ->latest()
             ->get();
 
         return view('admin.pembayaran.create', compact('tagihans'));
@@ -35,10 +37,10 @@ class PembayaranController extends Controller
                 'required', 'string', 'max:255',
                 'unique:pembayarans,nomor_pembayaran',
             ],
-            'tagihan_id' => ['required', 'exists:tagihans,id'],
-            'nominal_bayar' => ['required', 'numeric', 'min:0'],
-            'metode_pembayaran' => ['required', 'string', 'in:tunai,qris,transfer'],
-            'waktu_bayar' => ['required', 'date'],
+            'tagihan_id'        => ['required', 'exists:tagihans,id'],
+            'nominal_bayar'     => ['required', 'numeric', 'min:0'],
+            'metode_pembayaran' => ['required', 'string', 'in:tunai,qris'],
+            'waktu_bayar'       => ['required', 'date'],
         ]);
 
         $validated['user_id'] = auth()->id() ?? 1;
@@ -51,6 +53,13 @@ class PembayaranController extends Controller
         return redirect()
             ->route('admin.pembayaran.index')
             ->with('success', 'Data pembayaran berhasil ditambahkan.');
+    }
+
+    public function show(Pembayaran $pembayaran)
+    {
+        $pembayaran->load(['tagihan.wajibRetribusi', 'petugas']);
+
+        return view('admin.pembayaran.show', compact('pembayaran'));
     }
 
     public function edit(Pembayaran $pembayaran)
@@ -70,10 +79,10 @@ class PembayaranController extends Controller
                 Rule::unique('pembayarans', 'nomor_pembayaran')
                     ->ignore($pembayaran->id),
             ],
-            'tagihan_id' => ['required', 'exists:tagihans,id'],
-            'nominal_bayar' => ['required', 'numeric', 'min:0'],
-            'metode_pembayaran' => ['required', 'string', 'in:tunai,qris,transfer'],
-            'waktu_bayar' => ['required', 'date'],
+            'tagihan_id'        => ['required', 'exists:tagihans,id'],
+            'nominal_bayar'     => ['required', 'numeric', 'min:0'],
+            'metode_pembayaran' => ['required', 'string', 'in:tunai,qris'],
+            'waktu_bayar'       => ['required', 'date'],
         ]);
 
         $pembayaran->update($validated);

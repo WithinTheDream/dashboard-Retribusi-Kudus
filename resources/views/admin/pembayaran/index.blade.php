@@ -49,7 +49,7 @@
                         Rp {{ number_format($item->nominal_bayar, 0, ',', '.') }}
                     </td>
                     <td style="padding: 12px; text-transform: capitalize;">{{ $item->metode_pembayaran }}</td>
-                    <td style="padding: 12px;">{{ $item->waktu_bayar->format('d/m/Y H:i') }}</td>
+                    <td style="padding: 12px;">{{ \Carbon\Carbon::parse($item->waktu_bayar)->format('d/m/Y H:i') }}</td>
                     <td style="padding: 12px; text-align: center;">
                         <a href="{{ route('admin.pembayaran.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">
                             Edit
