@@ -16,12 +16,11 @@ class SetoranController extends Controller
     {
         $user = $request->user();
         
-        // Ambil pembayaran tunai hari ini yang belum disetor
-        $pembayarans = Pembayaran::with('tagihan')
+        // Ambil pembayaran tunai yang belum disetor oleh petugas ini
+        $pembayarans = Pembayaran::with('tagihan.wajibRetribusi')
             ->where('user_id', $user->id)
             ->where('metode_pembayaran', 'tunai')
             ->where('is_setor', false)
-            ->whereDate('waktu_bayar', Carbon::today())
             ->get();
 
         $totalUang = $pembayarans->sum('nominal_bayar');
@@ -29,9 +28,9 @@ class SetoranController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'total_uang' => $totalUang,
+                'total_uang'       => $totalUang,
                 'jumlah_transaksi' => $pembayarans->count(),
-                'rincian' => $pembayarans
+                'rincian'          => $pembayarans
             ]
         ]);
     }
@@ -46,39 +45,37 @@ class SetoranController extends Controller
             $pembayarans = Pembayaran::where('user_id', $user->id)
                 ->where('metode_pembayaran', 'tunai')
                 ->where('is_setor', false)
-                ->whereDate('waktu_bayar', Carbon::today())
                 ->get();
 
             if ($pembayarans->isEmpty()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tidak ada setoran untuk disubmit hari ini.'
+                    'message' => 'Tidak ada penerimaan pembayaran tunai yang perlu disetorkan saat ini.'
                 ], 400);
             }
 
             $totalUang = $pembayarans->sum('nominal_bayar');
 
-            // Generate nomor referensi
-            $noReferensi = 'SET-' . date('Ymd') . '-' . rand(1000, 9999);
+            // Generate nomor setoran (Contoh: SET-20260826-0001)
+            $countToday = Setoran::whereDate('created_at', today())->count() + 1;
+            $nomorSetoran = 'SET-' . date('Ymd') . '-' . str_pad($countToday, 4, '0', STR_PAD_LEFT);
 
             $setoran = Setoran::create([
-                'nomor_referensi' => $noReferensi,
-                'petugas_id' => $user->id,
-                // 'bendahara_id' => null, // diisi nanti oleh bendahara
-                'tanggal_setor' => now(),
-                'total_nominal' => $totalUang,
-                'status' => 'pending',
-                'metode_setoran' => 'tunai', // atau transfer
+                'nomor_setoran'  => $nomorSetoran,
+                'user_id'        => $user->id,
+                'tanggal_setor'  => now()->toDateString(),
+                'total_setoran'  => $totalUang,
+                'status_setoran' => 'menunggu',
+                'catatan'        => $request->catatan ?? null,
             ]);
 
             foreach ($pembayarans as $p) {
                 SetoranDetail::create([
-                    'setoran_id' => $setoran->id,
+                    'setoran_id'    => $setoran->id,
                     'pembayaran_id' => $p->id,
-                    'nominal' => $p->nominal_bayar,
                 ]);
 
-                // Update status verifikasi pembayaran
+                // Tandai pembayaran sudah masuk dalam bundle setoran
                 $p->is_setor = true;
                 $p->save();
             }
@@ -87,16 +84,16 @@ class SetoranController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Setoran berhasil dikirim.',
-                'data' => $setoran
-            ]);
+                'message' => 'Setoran berhasil disubmit ke bendahara.',
+                'data'    => $setoran->load('details.pembayaran.tagihan.wajibRetribusi')
+            ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memproses setoran.',
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
             ], 500);
         }
     }

@@ -33,8 +33,10 @@ class GenerateTagihanBulanan extends Command
 
         $this->info("Memulai proses generate tagihan untuk Bulan: {$bulan}, Tahun: {$tahun}");
 
-        // Ambil wajib retribusi yang aktif
-        $wajibRetribusis = WajibRetribusi::with('jenisRetribusi.tarifs')->where('status_aktif', true)->get();
+        // Ambil wajib retribusi yang aktif beserta tarif aktifnya
+        $wajibRetribusis = WajibRetribusi::with(['jenisRetribusi.tarifs' => function ($query) {
+            $query->where('is_aktif', true)->latest();
+        }])->where('status_aktif', true)->get();
 
         if ($wajibRetribusis->isEmpty()) {
             $this->warn("Tidak ada data wajib retribusi yang aktif.");
@@ -56,25 +58,25 @@ class GenerateTagihanBulanan extends Command
                 continue;
             }
 
-            // Dapatkan nominal tarif yang aktif saat ini (Asumsikan tarif pertama atau terbaru)
-            // Di sistem nyata mungkin ada logic tanggal_mulai/tanggal_selesai
-            $tarif = $wr->jenisRetribusi->tarifs->first();
+            // Dapatkan tarif yang berstatus aktif
+            $tarif = $wr->jenisRetribusi?->tarifs?->firstWhere('is_aktif', true)
+                ?? $wr->jenisRetribusi?->tarifs?->first();
             
             if (!$tarif) {
-                $this->error("Wajib Retribusi ID {$wr->id} ({$wr->nama_lengkap}) tidak memiliki tarif valid pada jenis retribusinya. Melewati...");
+                $this->error("Wajib Retribusi ID {$wr->id} ({$wr->nama_lengkap}) tidak memiliki tarif aktif pada jenis retribusinya. Melewati...");
                 continue;
             }
 
-            // Generate nomor tagihan unik
+            // Generate nomor tagihan unik (Contoh: INV-202608-000001)
             $nomorTagihan = 'INV-' . $tahun . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '-' . str_pad($wr->id, 6, '0', STR_PAD_LEFT);
 
             Tagihan::create([
-                'nomor_tagihan' => $nomorTagihan,
+                'nomor_tagihan'      => $nomorTagihan,
                 'wajib_retribusi_id' => $wr->id,
-                'bulan' => $bulan,
-                'tahun' => $tahun,
-                'nominal' => $tarif->nominal,
-                'status' => 'belum_bayar',
+                'bulan'              => (int) $bulan,
+                'tahun'              => (int) $tahun,
+                'nominal'            => $tarif->nominal,
+                'status'             => 'belum_bayar',
             ]);
 
             $countCreated++;

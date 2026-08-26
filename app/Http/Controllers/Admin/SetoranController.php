@@ -23,15 +23,14 @@ class SetoranController extends Controller
     {
         abort_if(!auth()->user()->hasPermission('setoran.view'), 403);
         
-        // Asumsi relasi setoranDetails ada jika diperlukan
-        $setoran->load(['petugas', 'bendahara']);
+        $setoran->load(['petugas', 'bendahara', 'details.pembayaran.tagihan.wajibRetribusi']);
         
         return view('admin.setoran.show', compact('setoran'));
     }
 
     public function verify(Request $request, Setoran $setoran)
     {
-        abort_if(!auth()->user()->hasPermission('setoran.update'), 403);
+        abort_if(!auth()->user()->hasPermission('setoran.verify') && !auth()->user()->hasPermission('setoran.update'), 403);
 
         $validated = $request->validate([
             'status_setoran' => 'required|in:diterima,ditolak',

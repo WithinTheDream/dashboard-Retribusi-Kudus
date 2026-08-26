@@ -4,7 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\WilayahController;
-use App\Models\JenisRetribusi; // pastikan tetap aman
+use App\Models\JenisRetribusi;
 use App\Http\Controllers\Admin\JenisRetribusiController;
 use App\Http\Controllers\Admin\TarifController;
 use App\Http\Controllers\Admin\WajibRetribusiController;
@@ -13,6 +13,13 @@ use App\Http\Controllers\Admin\TagihanController;
 use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PenggunaController;
+
+Route::get('/', function () {
+    if (auth()->check() && auth()->user()->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('login');
+})->name('home');
 
 Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
@@ -39,6 +46,8 @@ Route::middleware(['auth', 'admin'])
         ])->name('dashboard');
 
         // 2. Data Master: Wilayah & Jenis Retribusi
+        Route::post('wilayah/{kecamatan}/desa', [WilayahController::class, 'storeDesa'])->name('wilayah.desa.store');
+        Route::delete('wilayah/desa/{desa}', [WilayahController::class, 'destroyDesa'])->name('wilayah.desa.destroy');
         Route::resource(
             'wilayah', WilayahController::class
         );

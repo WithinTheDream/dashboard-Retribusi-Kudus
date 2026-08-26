@@ -8,6 +8,7 @@ use App\Models\WajibRetribusi;
 use App\Models\JenisRetribusi;
 use App\Models\Kecamatan;
 use App\Models\Desa;
+use App\Models\HistoriPengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,8 @@ class PengajuanController extends Controller
 {
     public function index()
     {
+        abort_if(!auth()->user()->hasPermission('pengajuan.view'), 403);
+
         $pengajuans = PengajuanWajibRetribusi::with([
             'kecamatan', 'desa', 'jenisRetribusi', 'user'
         ])->latest()->paginate(10);
@@ -25,6 +28,8 @@ class PengajuanController extends Controller
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('pengajuan.create'), 403);
+
         $jenisRetribusis = JenisRetribusi::all();
         $kecamatans = Kecamatan::all();
         $desas = collect();
@@ -36,6 +41,8 @@ class PengajuanController extends Controller
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->hasPermission('pengajuan.create'), 403);
+
         $validated = $request->validate([
             'nomor_pengajuan' => [
                 'required', 'string', 'max:255',
@@ -58,10 +65,17 @@ class PengajuanController extends Controller
             ],
         ]);
 
-        $validated['user_id'] = auth()->id() ?? 1;
+        $validated['user_id'] = auth()->id();
 
         DB::transaction(function () use ($validated) {
             $pengajuan = PengajuanWajibRetribusi::create($validated);
+
+            HistoriPengajuan::create([
+                'pengajuan_id' => $pengajuan->id,
+                'status' => $pengajuan->status_pengajuan,
+                'catatan' => 'Pengajuan dibuat',
+                'user_id' => auth()->id(),
+            ]);
 
             // Jika status langsung 'disetujui', buat entri Wajib Retribusi
             if ($validated['status_pengajuan'] === 'disetujui') {
@@ -80,6 +94,8 @@ class PengajuanController extends Controller
                         'alamat'             => $pengajuan->alamat,
                         'rt'                 => $pengajuan->rt,
                         'rw'                 => $pengajuan->rw,
+                        'lat'                => $pengajuan->lat,
+                        'lokasi_long'        => $pengajuan->lokasi_long,
                         'no_hp'              => $pengajuan->no_hp,
                         'status_aktif'       => true,
                     ]
@@ -94,14 +110,17 @@ class PengajuanController extends Controller
 
     public function show(PengajuanWajibRetribusi $pengajuan)
     {
-        // Telah disesuaikan tanpa relasi dokumenPengajuans yang belum ada
-        $pengajuan->load(['kecamatan', 'desa', 'jenisRetribusi', 'user']);
+        abort_if(!auth()->user()->hasPermission('pengajuan.view'), 403);
+
+        $pengajuan->load(['kecamatan', 'desa', 'jenisRetribusi', 'user', 'dokumen', 'histori.user']);
 
         return view('admin.pengajuan.show', compact('pengajuan'));
     }
 
     public function edit(PengajuanWajibRetribusi $pengajuan)
     {
+        abort_if(!auth()->user()->hasPermission('pengajuan.update') && !auth()->user()->hasPermission('pengajuan.verify'), 403);
+
         $jenisRetribusis = JenisRetribusi::all();
         $kecamatans = Kecamatan::all();
         $desas = Desa::where('kec_id', $pengajuan->kecamatan_id)->get();
@@ -113,6 +132,8 @@ class PengajuanController extends Controller
 
     public function update(Request $request, PengajuanWajibRetribusi $pengajuan)
     {
+        abort_if(!auth()->user()->hasPermission('pengajuan.update') && !auth()->user()->hasPermission('pengajuan.verify'), 403);
+
         $validated = $request->validate([
             'nomor_pengajuan' => [
                 'required', 'string', 'max:255',
@@ -137,8 +158,19 @@ class PengajuanController extends Controller
             'catatan_admin' => ['nullable', 'string'],
         ]);
 
-        DB::transaction(function () use ($validated, $pengajuan) {
+        $statusChanged = $pengajuan->status_pengajuan !== $validated['status_pengajuan'];
+
+        DB::transaction(function () use ($validated, $pengajuan, $statusChanged) {
             $pengajuan->update($validated);
+
+            if ($statusChanged || !empty($validated['catatan_admin'])) {
+                HistoriPengajuan::create([
+                    'pengajuan_id' => $pengajuan->id,
+                    'status' => $pengajuan->status_pengajuan,
+                    'catatan' => $validated['catatan_admin'] ?? 'Status diubah menjadi ' . $pengajuan->status_pengajuan,
+                    'user_id' => auth()->id(),
+                ]);
+            }
 
             // Jika status diubah menjadi 'disetujui', buat record Wajib Retribusi otomatis
             if ($validated['status_pengajuan'] === 'disetujui') {
@@ -157,36 +189,14 @@ class PengajuanController extends Controller
                         'alamat'             => $pengajuan->alamat,
                         'rt'                 => $pengajuan->rt,
                         'rw'                 => $pengajuan->rw,
+                        'lat'                => $pengajuan->lat,
+                        'lokasi_long'        => $pengajuan->lokasi_long,
                         'no_hp'              => $pengajuan->no_hp,
                         'status_aktif'       => true,
                     ]
                 );
             }
         });
-
-        // Jika disetujui, otomatis buat data Wajib Retribusi jika belum ada
-        if ($validated['status_pengajuan'] === 'disetujui') {
-            \App\Models\WajibRetribusi::firstOrCreate(
-                ['pengajuan_id' => $pengajuan->id],
-                [
-                    'kode' => 'WR-' . date('Ym') . str_pad($pengajuan->id, 4, '0', STR_PAD_LEFT),
-                    'user_id' => $pengajuan->user_id,
-                    'nik' => $pengajuan->nik,
-                    'nama_lengkap' => $pengajuan->nama_lengkap,
-                    'nama_usaha' => $pengajuan->nama_usaha,
-                    'kecamatan_id' => $pengajuan->kecamatan_id,
-                    'desa_id' => $pengajuan->desa_id,
-                    'alamat' => $pengajuan->alamat,
-                    'rt' => $pengajuan->rt,
-                    'rw' => $pengajuan->rw,
-                    'lokasi_long' => $pengajuan->lokasi_long,
-                    'lat' => $pengajuan->lat,
-                    'no_hp' => $pengajuan->no_hp,
-                    'jenis_retribusi_id' => $pengajuan->jenis_retribusi_id,
-                    'status_aktif' => true,
-                ]
-            );
-        }
 
         return redirect()
             ->route('admin.pengajuan.index')
@@ -195,6 +205,8 @@ class PengajuanController extends Controller
 
     public function destroy(PengajuanWajibRetribusi $pengajuan)
     {
+        abort_if(!auth()->user()->hasPermission('pengajuan.delete'), 403);
+
         if ($pengajuan->wajibRetribusi()->exists()) {
             return back()->with(
                 'error',

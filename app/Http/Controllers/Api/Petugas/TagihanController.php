@@ -16,23 +16,19 @@ class TagihanController extends Controller
         // Ambil penugasan wilayah untuk petugas ini
         $penugasans = PenugasanWilayah::where('user_id', $user->id)->get();
 
-        if ($penugasans->isEmpty()) {
-            return response()->json([
-                'success' => true,
-                'data' => []
-            ]);
-        }
-
-        // Ambil tagihan yang belum bayar di wilayah penugasan
+        // Ambil tagihan yang belum bayar
         $tagihanQuery = Tagihan::with(['wajibRetribusi.desa', 'wajibRetribusi.kecamatan'])
-            ->where('status', 'belum_bayar')
-            ->whereHas('wajibRetribusi', function ($query) use ($penugasans) {
+            ->where('status', 'belum_bayar');
+
+        // Jika petugas memiliki penugasan wilayah spesifik, filter sesuai wilayah penugasan
+        if ($penugasans->isNotEmpty()) {
+            $tagihanQuery->whereHas('wajibRetribusi', function ($query) use ($penugasans) {
                 $query->where(function ($q) use ($penugasans) {
                     foreach ($penugasans as $penugasan) {
                         $q->orWhere(function ($subQ) use ($penugasan) {
                             $subQ->where('kecamatan_id', $penugasan->kecamatan_id)
                                  ->where('desa_id', $penugasan->desa_id);
-                            
+
                             if ($penugasan->rw) {
                                 $subQ->where('rw', $penugasan->rw);
                             }
@@ -40,6 +36,7 @@ class TagihanController extends Controller
                     }
                 });
             });
+        }
 
         $tagihans = $tagihanQuery->get();
 

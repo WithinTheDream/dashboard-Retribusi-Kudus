@@ -7,11 +7,14 @@ use App\Models\Pembayaran;
 use App\Models\Tagihan;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class PembayaranController extends Controller
 {
     public function index()
     {
+        abort_if(!auth()->user()->hasPermission('pembayaran.view'), 403);
+
         $pembayarans = Pembayaran::with(['tagihan.wajibRetribusi', 'petugas'])
             ->latest()
             ->paginate(10);
@@ -21,6 +24,8 @@ class PembayaranController extends Controller
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('pembayaran.create'), 403);
+
         $tagihans = Tagihan::where('status', '!=', 'lunas')
             ->orWhereNull('status')
             ->with('wajibRetribusi')
@@ -32,6 +37,8 @@ class PembayaranController extends Controller
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->hasPermission('pembayaran.create'), 403);
+
         $validated = $request->validate([
             'nomor_pembayaran' => [
                 'required', 'string', 'max:255',
@@ -43,12 +50,14 @@ class PembayaranController extends Controller
             'waktu_bayar'       => ['required', 'date'],
         ]);
 
-        $validated['user_id'] = auth()->id() ?? 1;
+        $validated['user_id'] = auth()->id();
 
-        $pembayaran = Pembayaran::create($validated);
+        DB::transaction(function () use ($validated, $request) {
+            $pembayaran = Pembayaran::create($validated);
 
-        Tagihan::where('id', $request->tagihan_id)
-            ->update(['status' => 'lunas']);
+            Tagihan::where('id', $request->tagihan_id)
+                ->update(['status' => 'lunas']);
+        });
 
         return redirect()
             ->route('admin.pembayaran.index')
@@ -57,6 +66,8 @@ class PembayaranController extends Controller
 
     public function show(Pembayaran $pembayaran)
     {
+        abort_if(!auth()->user()->hasPermission('pembayaran.view'), 403);
+
         $pembayaran->load(['tagihan.wajibRetribusi', 'petugas']);
 
         return view('admin.pembayaran.show', compact('pembayaran'));
@@ -64,6 +75,8 @@ class PembayaranController extends Controller
 
     public function edit(Pembayaran $pembayaran)
     {
+        abort_if(!auth()->user()->hasPermission('pembayaran.update'), 403);
+
         $tagihans = Tagihan::with('wajibRetribusi')->get();
 
         return view('admin.pembayaran.edit', compact(
@@ -73,6 +86,8 @@ class PembayaranController extends Controller
 
     public function update(Request $request, Pembayaran $pembayaran)
     {
+        abort_if(!auth()->user()->hasPermission('pembayaran.update'), 403);
+
         $validated = $request->validate([
             'nomor_pembayaran' => [
                 'required', 'string', 'max:255',
@@ -94,6 +109,8 @@ class PembayaranController extends Controller
 
     public function destroy(Pembayaran $pembayaran)
     {
+        abort_if(!auth()->user()->hasPermission('pembayaran.delete'), 403);
+
         if ($pembayaran->setoranDetail()->exists()) {
             return back()->with(
                 'error',
@@ -101,10 +118,18 @@ class PembayaranController extends Controller
             );
         }
 
-        $pembayaran->delete();
+        DB::transaction(function () use ($pembayaran) {
+            $tagihanId = $pembayaran->tagihan_id;
+            $pembayaran->delete();
+
+            // Kembalikan status tagihan ke belum_bayar jika tidak ada pembayaran lain
+            if (!Pembayaran::where('tagihan_id', $tagihanId)->exists()) {
+                Tagihan::where('id', $tagihanId)->update(['status' => 'belum_bayar']);
+            }
+        });
 
         return redirect()
             ->route('admin.pembayaran.index')
-            ->with('success', 'Data pembayaran berhasil dihapus.');
+            ->with('success', 'Data pembayaran berhasil dihapus dan status tagihan dikembalikan.');
     }
 }

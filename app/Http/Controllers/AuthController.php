@@ -9,6 +9,10 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return view('auth.login');
     }
 
@@ -92,7 +96,11 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
-            return redirect()->route('home');
+            // Jika role biasa (warga) login di web admin
+            Auth::logout();
+            return back()
+                ->withErrors(['username' => 'Akun Anda tidak memiliki akses ke panel administrasi. Silakan gunakan aplikasi mobile.'])
+                ->onlyInput('username');
         }
 
         return back()

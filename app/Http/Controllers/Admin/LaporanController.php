@@ -11,6 +11,8 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
+        abort_if(!auth()->user()->hasPermission('laporan.view'), 403);
+
         $validated = $request->validate([
             'bulan' => ['nullable', 'integer', 'between:1,12'],
             'tahun' => ['nullable', 'integer', 'min:2020', 'max:2099'],

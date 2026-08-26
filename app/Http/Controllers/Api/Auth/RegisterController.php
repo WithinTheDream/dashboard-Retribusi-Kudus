@@ -5,33 +5,34 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\WajibRetribusi;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
     public function register(Request $request)
     {
-        $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'no_hp' => 'required|string',
+        $validated = $request->validate([
+            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:6'],
+            'no_hp' => ['required', 'string', 'max:20'],
         ]);
 
         try {
             DB::beginTransaction();
 
-            // 1. Buat User baru (Role: user)
+            $userRole = Role::where('name', 'user')->first();
+
             $user = User::create([
-                'nama_lengkap' => $request->nama_lengkap,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'no_hp' => $request->no_hp,
-                'role' => 'user', // default role
+                'nama_lengkap' => $validated['nama_lengkap'],
+                'username' => $validated['username'],
+                'email' => $validated['email'],
+                'password' => $validated['password'],
+                'no_hp' => $validated['no_hp'],
+                'role' => 'user',
+                'role_id' => $userRole?->id,
             ]);
 
             DB::commit();
@@ -39,8 +40,15 @@ class RegisterController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Registrasi berhasil! Silakan login untuk mengajukan retribusi.',
-                'data' => $user
-            ]);
+                'data' => [
+                    'id' => $user->id,
+                    'nama_lengkap' => $user->nama_lengkap,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'no_hp' => $user->no_hp,
+                    'role' => $user->role,
+                ]
+            ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();

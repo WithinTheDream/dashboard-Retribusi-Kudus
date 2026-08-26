@@ -12,8 +12,7 @@ class TarifController extends Controller
     public function index()
     {
         abort_if(!auth()->user()->hasPermission('tarif.view'), 403);
-        // Mengambil data tarif beserta relasi jenis retribusinya
-        $tarifs = Tarif::with('jenisRetribusi')->get();
+        $tarifs = Tarif::with('jenisRetribusi')->latest()->get();
         return view('admin.tarif.index', compact('tarifs'));
     }
 
@@ -27,12 +26,17 @@ class TarifController extends Controller
     public function store(Request $request)
     {
         abort_if(!auth()->user()->hasPermission('tarif.create'), 403);
-        $request->validate([
+        $validated = $request->validate([
             'jenis_retribusi_id' => 'required|exists:jenis_retribusis,id',
             'nominal' => 'required|numeric|min:0',
+            'satuan' => 'nullable|string|max:50',
+            'periode' => 'nullable|integer',
+            'is_aktif' => 'nullable|boolean',
         ]);
 
-        Tarif::create($request->all());
+        $validated['is_aktif'] = $request->boolean('is_aktif', true);
+
+        Tarif::create($validated);
         return redirect()->route('admin.tarif.index')->with('success', 'Data tarif berhasil ditambahkan.');
     }
 
@@ -46,12 +50,17 @@ class TarifController extends Controller
     public function update(Request $request, Tarif $tarif)
     {
         abort_if(!auth()->user()->hasPermission('tarif.update'), 403);
-        $request->validate([
+        $validated = $request->validate([
             'jenis_retribusi_id' => 'required|exists:jenis_retribusis,id',
             'nominal' => 'required|numeric|min:0',
+            'satuan' => 'nullable|string|max:50',
+            'periode' => 'nullable|integer',
+            'is_aktif' => 'nullable|boolean',
         ]);
 
-        $tarif->update($request->all());
+        $validated['is_aktif'] = $request->boolean('is_aktif', true);
+
+        $tarif->update($validated);
         return redirect()->route('admin.tarif.index')->with('success', 'Data tarif berhasil diperbarui.');
     }
 

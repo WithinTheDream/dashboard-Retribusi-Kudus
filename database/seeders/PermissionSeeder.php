@@ -18,7 +18,9 @@ class PermissionSeeder extends Seeder
             ['name' => 'users.delete', 'display_name' => 'Menghapus Pengguna', 'module' => 'users'],
 
             ['name' => 'roles.view', 'display_name' => 'Melihat Role', 'module' => 'roles'],
+            ['name' => 'roles.create', 'display_name' => 'Menambah Role', 'module' => 'roles'],
             ['name' => 'roles.update', 'display_name' => 'Mengubah Permission Role', 'module' => 'roles'],
+            ['name' => 'roles.delete', 'display_name' => 'Menghapus Role', 'module' => 'roles'],
 
             ['name' => 'wilayah.view', 'display_name' => 'Melihat Wilayah', 'module' => 'wilayah'],
             ['name' => 'wilayah.create', 'display_name' => 'Menambah Wilayah', 'module' => 'wilayah'],
@@ -39,14 +41,28 @@ class PermissionSeeder extends Seeder
             ['name' => 'pengajuan.create', 'display_name' => 'Membuat Pengajuan', 'module' => 'pengajuan'],
             ['name' => 'pengajuan.update', 'display_name' => 'Mengubah Pengajuan', 'module' => 'pengajuan'],
             ['name' => 'pengajuan.verify', 'display_name' => 'Memverifikasi Pengajuan', 'module' => 'pengajuan'],
+            ['name' => 'pengajuan.delete', 'display_name' => 'Menghapus Pengajuan', 'module' => 'pengajuan'],
 
             ['name' => 'tagihan.view', 'display_name' => 'Melihat Tagihan', 'module' => 'tagihan'],
             ['name' => 'tagihan.create', 'display_name' => 'Membuat Tagihan', 'module' => 'tagihan'],
             ['name' => 'tagihan.update', 'display_name' => 'Mengubah Tagihan', 'module' => 'tagihan'],
+            ['name' => 'tagihan.delete', 'display_name' => 'Menghapus Tagihan', 'module' => 'tagihan'],
 
             ['name' => 'pembayaran.view', 'display_name' => 'Melihat Pembayaran', 'module' => 'pembayaran'],
             ['name' => 'pembayaran.create', 'display_name' => 'Membuat Pembayaran', 'module' => 'pembayaran'],
+            ['name' => 'pembayaran.update', 'display_name' => 'Mengubah Pembayaran', 'module' => 'pembayaran'],
             ['name' => 'pembayaran.verify', 'display_name' => 'Memverifikasi Pembayaran', 'module' => 'pembayaran'],
+            ['name' => 'pembayaran.delete', 'display_name' => 'Menghapus Pembayaran', 'module' => 'pembayaran'],
+
+            ['name' => 'setoran.view', 'display_name' => 'Melihat Setoran Petugas', 'module' => 'setoran'],
+            ['name' => 'setoran.create', 'display_name' => 'Membuat Setoran', 'module' => 'setoran'],
+            ['name' => 'setoran.update', 'display_name' => 'Mengubah Setoran', 'module' => 'setoran'],
+            ['name' => 'setoran.verify', 'display_name' => 'Memverifikasi Setoran', 'module' => 'setoran'],
+
+            ['name' => 'penugasan.view', 'display_name' => 'Melihat Penugasan Wilayah', 'module' => 'penugasan'],
+            ['name' => 'penugasan.create', 'display_name' => 'Menambah Penugasan Wilayah', 'module' => 'penugasan'],
+            ['name' => 'penugasan.update', 'display_name' => 'Mengubah Penugasan Wilayah', 'module' => 'penugasan'],
+            ['name' => 'penugasan.delete', 'display_name' => 'Menghapus Penugasan Wilayah', 'module' => 'penugasan'],
 
             ['name' => 'laporan.view', 'display_name' => 'Melihat Laporan', 'module' => 'laporan'],
             ['name' => 'laporan.export', 'display_name' => 'Export Laporan', 'module' => 'laporan'],

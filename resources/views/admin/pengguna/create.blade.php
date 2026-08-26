@@ -48,9 +48,9 @@
             <div>
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">Role</label>
                 <select name="role" required style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
-                    @foreach(['admin', 'petugas', 'bendahara', 'user'] as $role)
-                        <option value="{{ $role }}" {{ old('role', 'user') == $role ? 'selected' : '' }}>
-                            {{ ucfirst($role) }}
+                    @foreach($roles as $r)
+                        <option value="{{ $r->name }}" {{ old('role', 'user') == $r->name ? 'selected' : '' }}>
+                            {{ $r->display_name }} ({{ $r->name }})
                         </option>
                     @endforeach
                 </select>

@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -20,6 +21,7 @@ class User extends Authenticatable
         'no_hp',
         'password',
         'role',
+        'role_id',
     ];
 
     protected $hidden = [
@@ -37,14 +39,17 @@ class User extends Authenticatable
 
     /*
     |--------------------------------------------------------------------------
-    | Role Helper
+    | Role Helper & Permissions
     |--------------------------------------------------------------------------
     */
 
     public function isAdmin(): bool
     {
-        return $this->hasRole('admin')
-            || $this->hasRole('admin_dinas');
+        return $this->isSuperAdmin()
+            || $this->hasRole('admin')
+            || $this->hasRole('admin_dinas')
+            || $this->isBendahara()
+            || $this->isPimpinan();
     }
 
     public function isSuperAdmin(): bool
@@ -71,10 +76,22 @@ class User extends Authenticatable
     {
         return $this->hasRole('user');
     }
+
     public function roleRelation(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
+
+    public function penugasanWilayah(): HasMany
+    {
+        return $this->hasMany(PenugasanWilayah::class);
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
     public function hasPermission(string $permission): bool
     {
         if ($this->isSuperAdmin()) {
@@ -82,6 +99,7 @@ class User extends Authenticatable
         }
         return $this->roleRelation?->hasPermission($permission) ?? false;
     }
+
     public function hasRole(string $role): bool
     {
         return $this->roleRelation?->name === $role

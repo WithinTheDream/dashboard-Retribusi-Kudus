@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
-        @yield('title', 'Dashboard Admin')
+        @yield('title', 'Dashboard Admin - Retribusi Kudus')
     </title>
 
     <style>
@@ -16,9 +16,9 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            color: #1f2937;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
         }
 
         .layout {
@@ -28,47 +28,69 @@
 
         .sidebar {
             width: 250px;
-            background: #111827;
+            background: #0f172a;
             color: white;
-            padding: 20px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
         }
 
         .logo {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding: 0 8px;
+            color: #38bdf8;
+            letter-spacing: 0.5px;
+        }
+
+        .menu {
+            flex: 1;
         }
 
         .menu-title {
-            font-size: 12px;
-            color: #9ca3af;
-            margin: 20px 0 10px;
+            font-size: 11px;
+            color: #64748b;
+            margin: 18px 8px 8px;
             text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.8px;
         }
 
         .menu a {
-            display: block;
-            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            color: #cbd5e1;
             text-decoration: none;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 5px;
+            padding: 9px 12px;
+            border-radius: 6px;
+            margin-bottom: 3px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.15s ease, color 0.15s ease;
         }
 
-        .menu a:hover,
+        .menu a:hover {
+            background: #1e293b;
+            color: #ffffff;
+        }
+
         .menu a.active {
             background: #2563eb;
-            color: white;
+            color: #ffffff;
         }
 
         .main {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
         }
 
         .navbar {
-            height: 70px;
+            height: 64px;
             background: white;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -77,25 +99,38 @@
 
         .content {
             padding: 25px;
+            flex: 1;
         }
 
         .profile {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .badge-role {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .logout button {
             border: none;
-            background: #ef4444;
-            color: white;
-            padding: 8px 12px;
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s ease;
         }
 
         .logout button:hover {
-            background: #dc2626;
+            background: #fecaca;
         }
     </style>
 
@@ -114,95 +149,105 @@
 
         <div class="menu">
 
-            <div class="menu-title">
-                Utama
-            </div>
-
-            <!-- Dashboard biasanya bisa diakses semua level admin, jadi tidak perlu dibungkus permission spesifik -->
-            <a href="{{ route('admin.dashboard') }}">
-                Dashboard
-            </a>
-
-            <div class="menu-title">
-                Data Master
-            </div>
-
-            @if(auth()->user()->hasPermission('wilayah.view'))
-                <a href="{{ route('admin.wilayah.index') }}">
-                    Wilayah
+            <!-- 1. UTAMA -->
+            @if(auth()->user()->hasPermission('dashboard.view'))
+                <div class="menu-title">
+                    Utama
+                </div>
+                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    Dashboard
                 </a>
             @endif
 
-            @if(auth()->user()->hasPermission('jenis_retribusi.view'))
-                <a href="{{ route('admin.jenis-retribusi.index') }}">
-                    Jenis Retribusi
-                </a>
+            <!-- 2. DATA MASTER (Wilayah, Jenis Retribusi, Tarif) -->
+            @if(auth()->user()->hasPermission('wilayah.view') || auth()->user()->hasPermission('jenis_retribusi.view') || auth()->user()->hasPermission('tarif.view'))
+                <div class="menu-title">
+                    Data Master
+                </div>
+
+                @if(auth()->user()->hasPermission('wilayah.view'))
+                    <a href="{{ route('admin.wilayah.index') }}" class="{{ request()->routeIs('admin.wilayah.*') ? 'active' : '' }}">
+                        Wilayah
+                    </a>
+                @endif
+
+                @if(auth()->user()->hasPermission('jenis_retribusi.view'))
+                    <a href="{{ route('admin.jenis-retribusi.index') }}" class="{{ request()->routeIs('admin.jenis-retribusi.*') ? 'active' : '' }}">
+                        Jenis Retribusi
+                    </a>
+                @endif
+
+                @if(auth()->user()->hasPermission('tarif.view'))
+                    <a href="{{ route('admin.tarif.index') }}" class="{{ request()->routeIs('admin.tarif.*') ? 'active' : '' }}">
+                        Tarif
+                    </a>
+                @endif
             @endif
 
-            @if(auth()->user()->hasPermission('tarif.view'))
-                <a href="{{ route('admin.tarif.index') }}">
-                    Tarif
-                </a>
+            <!-- 3. OPERASIONAL -->
+            @if(auth()->user()->hasPermission('wajib_retribusi.view') || auth()->user()->hasPermission('pengajuan.view') || auth()->user()->hasPermission('tagihan.view') || auth()->user()->hasPermission('pembayaran.view') || auth()->user()->hasPermission('setoran.view'))
+                <div class="menu-title">
+                    Operasional
+                </div>
+
+                @if(auth()->user()->hasPermission('wajib_retribusi.view'))
+                    <a href="{{ route('admin.wajib-retribusi.index') }}" class="{{ request()->routeIs('admin.wajib-retribusi.*') ? 'active' : '' }}">
+                        Wajib Retribusi
+                    </a>
+                @endif
+
+                @if(auth()->user()->hasPermission('pengajuan.view'))
+                    <a href="{{ route('admin.pengajuan.index') }}" class="{{ request()->routeIs('admin.pengajuan.*') ? 'active' : '' }}">
+                        Pengajuan
+                    </a>
+                @endif
+
+                @if(auth()->user()->hasPermission('tagihan.view'))
+                    <a href="{{ route('admin.tagihan.index') }}" class="{{ request()->routeIs('admin.tagihan.*') ? 'active' : '' }}">
+                        Tagihan
+                    </a>
+                @endif
+
+                @if(auth()->user()->hasPermission('pembayaran.view'))
+                    <a href="{{ route('admin.pembayaran.index') }}" class="{{ request()->routeIs('admin.pembayaran.*') ? 'active' : '' }}">
+                        Pembayaran
+                    </a>
+                @endif
+
+                @if(auth()->user()->hasPermission('setoran.view'))
+                    <a href="{{ route('admin.setoran.index') }}" class="{{ request()->routeIs('admin.setoran.*') ? 'active' : '' }}">
+                        Setoran Petugas
+                    </a>
+                @endif
             @endif
 
-            <div class="menu-title">
-                Operasional
-            </div>
-
-            @if(auth()->user()->hasPermission('wajib_retribusi.view'))
-                <a href="{{ route('admin.wajib-retribusi.index') }}">
-                    Wajib Retribusi
-                </a>
-            @endif
-
-            @if(auth()->user()->hasPermission('pengajuan.view'))
-                <a href="{{ route('admin.pengajuan.index') }}">
-                    Pengajuan
-                </a>
-            @endif
-
-            @if(auth()->user()->hasPermission('tagihan.view'))
-                <a href="{{ route('admin.tagihan.index') }}">
-                    Tagihan
-                </a>
-            @endif
-
-            @if(auth()->user()->hasPermission('pembayaran.view'))
-                <a href="{{ route('admin.pembayaran.index') }}">
-                    Pembayaran
-                </a>
-            @endif
-
-            @if(auth()->user()->hasPermission('setoran.view'))
-                <a href="{{ route('admin.setoran.index') }}">
-                    Setoran Petugas
-                </a>
-            @endif
-
-            <div class="menu-title">
-                Laporan
-            </div>
-
+            <!-- 4. LAPORAN -->
             @if(auth()->user()->hasPermission('laporan.view'))
-                <a href="{{ route('admin.laporan.index') }}">
+                <div class="menu-title">
                     Laporan
+                </div>
+                <a href="{{ route('admin.laporan.index') }}" class="{{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                    Laporan Rekapitulasi
                 </a>
             @endif
 
-            <div class="menu-title">
-                Sistem
-            </div>
+            <!-- 5. SISTEM (Pengguna & Role) -->
+            @if(auth()->user()->hasPermission('users.view') || auth()->user()->hasPermission('roles.view'))
+                <div class="menu-title">
+                    Sistem
+                </div>
 
-            @if(auth()->user()->hasPermission('users.view'))
-                <a href="{{ route('admin.pengguna.index') }}">
-                    Pengguna
-                </a>
-            @endif
+                @if(auth()->user()->hasPermission('users.view'))
+                    <a href="{{ route('admin.pengguna.index') }}" class="{{ request()->routeIs('admin.pengguna.*') ? 'active' : '' }}">
+                        Pengguna
+                    </a>
+                @endif
 
-            @if(auth()->user()->hasPermission('roles.view'))
-                <a href="{{ route('admin.roles.index') }}">
-                    Role & Hak Akses
-                </a>
+                @if(auth()->user()->hasPermission('roles.view'))
+                    <a href="{{ route('admin.roles.index') }}" class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
+                        Role & Hak Akses
+                    </a>
+                @endif
             @endif
 
         </div>
@@ -214,19 +259,19 @@
         <nav class="navbar">
 
             <div>
-                <strong>
+                <strong style="font-size: 16px; color: #1e293b;">
                     @yield('page-title', 'Dashboard')
                 </strong>
             </div>
 
             <div class="profile">
 
-                <span>
+                <span style="font-size: 14px; font-weight: 600; color: #334155;">
                     {{ auth()->user()->nama_lengkap }}
                 </span>
 
-                <span>
-                    ({{ auth()->user()->role }})
+                <span class="badge-role">
+                    {{ auth()->user()->roleRelation?->display_name ?? ucfirst(auth()->user()->role) }}
                 </span>
 
                 <form
@@ -235,7 +280,6 @@
                     class="logout"
                 >
                     @csrf
-
                     <button type="submit">
                         Logout
                     </button>
