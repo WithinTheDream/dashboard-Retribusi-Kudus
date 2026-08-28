@@ -48,6 +48,10 @@ class RolePermissionSeeder extends Seeder
                 'wajib_retribusi.create',
                 'wajib_retribusi.update',
                 'wajib_retribusi.delete',
+                'petugas.view',
+                'petugas.create',
+                'petugas.update',
+                'petugas.delete',
             ]
         );
 

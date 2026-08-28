@@ -179,7 +179,7 @@
                 </a>
             @endif
 
-            @if(auth()->user()->hasPermission('users.view'))
+            @if(auth()->user()->hasPermission('petugas.view'))
                 <a href="{{ route('admin.petugas.index') }}">
                     Kelola Petugas
                 </a>

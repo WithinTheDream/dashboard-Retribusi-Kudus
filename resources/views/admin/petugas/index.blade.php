@@ -13,7 +13,7 @@
             </p>
         </div>
 
-        @if(auth()->user()->hasPermission('users.create'))
+        @if(auth()->user()->hasPermission('petugas.create'))
             <a href="{{ route('admin.petugas.create') }}" style="background: #10b981; color: white; padding: 9px 18px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
                 <span>+</span> Tambah Petugas & Wilayah
             </a>
@@ -79,13 +79,13 @@
                             @endif
                         </td>
                         <td style="padding: 12px; text-align: center; vertical-align: top;">
-                            @if(auth()->user()->hasPermission('users.update'))
+                            @if(auth()->user()->hasPermission('petugas.update'))
                                 <a href="{{ route('admin.petugas.edit', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 12px; font-weight: 500; font-size: 13px;">
                                     Edit
                                 </a>
                             @endif
 
-                            @if(auth()->user()->hasPermission('users.delete'))
+                            @if(auth()->user()->hasPermission('petugas.delete'))
                                 <form action="{{ route('admin.petugas.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus petugas ini beserta seluruh penugasan wilayahnya?');">
                                     @csrf
                                     @method('DELETE')

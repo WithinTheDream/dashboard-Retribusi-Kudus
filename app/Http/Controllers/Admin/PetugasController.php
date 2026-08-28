@@ -16,7 +16,7 @@ class PetugasController extends Controller
 {
     public function index()
     {
-        abort_if(!auth()->user()->hasPermission('users.view'), 403);
+        abort_if(!auth()->user()->hasPermission('petugas.view'), 403);
 
         $petugasList = User::where('role', 'petugas')
             ->orWhereHas('roleRelation', function ($query) {
@@ -31,7 +31,7 @@ class PetugasController extends Controller
 
     public function create()
     {
-        abort_if(!auth()->user()->hasPermission('users.create'), 403);
+        abort_if(!auth()->user()->hasPermission('petugas.create'), 403);
 
         $kecamatans = Kecamatan::orderBy('kecamatan', 'asc')->get();
 
@@ -40,7 +40,7 @@ class PetugasController extends Controller
 
     public function store(Request $request)
     {
-        abort_if(!auth()->user()->hasPermission('users.create'), 403);
+        abort_if(!auth()->user()->hasPermission('petugas.create'), 403);
 
         $validated = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
@@ -81,7 +81,7 @@ class PetugasController extends Controller
 
     public function edit(User $petuga)
     {
-        abort_if(!auth()->user()->hasPermission('users.update'), 403);
+        abort_if(!auth()->user()->hasPermission('petugas.update'), 403);
 
         $petugas = $petuga;
         $petugas->load(['penugasanWilayahs.kecamatan', 'penugasanWilayahs.desa']);
@@ -95,7 +95,7 @@ class PetugasController extends Controller
 
     public function update(Request $request, User $petuga)
     {
-        abort_if(!auth()->user()->hasPermission('users.update'), 403);
+        abort_if(!auth()->user()->hasPermission('petugas.update'), 403);
 
         $petugas = $petuga;
 
@@ -148,7 +148,7 @@ class PetugasController extends Controller
 
     public function destroy(User $petuga)
     {
-        abort_if(!auth()->user()->hasPermission('users.delete'), 403);
+        abort_if(!auth()->user()->hasPermission('petugas.delete'), 403);
 
         $petugas = $petuga;
 
