@@ -20,6 +20,7 @@ class User extends Authenticatable
         'no_hp',
         'password',
         'role',
+        'role_id',
     ];
 
     protected $hidden = [
@@ -86,5 +87,10 @@ class User extends Authenticatable
     {
         return $this->roleRelation?->name === $role
             || $this->role === $role;
+    }
+
+    public function penugasanWilayahs()
+    {
+        return $this->hasMany(PenugasanWilayah::class, 'user_id');
     }
 }

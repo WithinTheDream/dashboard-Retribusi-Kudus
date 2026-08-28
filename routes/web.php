@@ -89,6 +89,12 @@ Route::middleware(['auth', 'admin'])
             \App\Http\Controllers\Admin\SetoranController::class
         )->only(['index', 'show']);
 
+        // Kelola Petugas Lapangan & Penugasan Wilayah
+        Route::resource(
+            'petugas',
+            \App\Http\Controllers\Admin\PetugasController::class
+        )->except(['show']);
+
         // 7. Laporan: Rekap Tagihan & Pembayaran
         Route::get(
             'laporan',

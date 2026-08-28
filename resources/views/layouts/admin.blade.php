@@ -179,6 +179,12 @@
                 </a>
             @endif
 
+            @if(auth()->user()->hasPermission('users.view'))
+                <a href="{{ route('admin.petugas.index') }}">
+                    Kelola Petugas
+                </a>
+            @endif
+
             <div class="menu-title">
                 Laporan
             </div>

@@ -4,9 +4,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PengajuanController;
+use App\Http\Controllers\Api\MasterDataController;
 
 Route::prefix('mobile')->group(function () {
-    // Public routes
+    // Public Master Data routes
+    Route::prefix('master')->group(function () {
+        Route::get('/jenis-retribusi', [MasterDataController::class, 'jenisRetribusi']);
+        Route::get('/kecamatan', [MasterDataController::class, 'kecamatan']);
+        Route::get('/desa/{kecamatanId}', [MasterDataController::class, 'desa']);
+    });
+
+    // Public Auth routes
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [\App\Http\Controllers\Api\Auth\RegisterController::class, 'register']);
 
@@ -18,8 +27,8 @@ Route::prefix('mobile')->group(function () {
         // Warga Endpoints
         Route::prefix('warga')->group(function () {
             Route::get('/dashboard', [\App\Http\Controllers\Api\Warga\WargaDashboardController::class, 'index']);
-            Route::post('/pengajuan', [\App\Http\Controllers\Api\Warga\PengajuanController::class, 'store']);
-            Route::get('/pengajuan/status', [\App\Http\Controllers\Api\Warga\PengajuanController::class, 'status']);
+            Route::post('/pengajuan', [PengajuanController::class, 'store']);
+            Route::get('/pengajuan/status', [PengajuanController::class, 'status']);
         });
         
         // Petugas Endpoints

@@ -10,45 +10,70 @@ class DesaSeeder extends Seeder
 {
     public function run(): void
     {
-        $kudus = Kecamatan::where('kecamatan', 'Kudus')->first();
-        $jati = Kecamatan::where('kecamatan', 'Jati')->first();
-        $bae = Kecamatan::where('kecamatan', 'Bae')->first();
+        $kecamatans = Kecamatan::pluck('id', 'kecamatan')->toArray();
 
-        $data = [
-            [
-                'kec_id' => $kudus->id,
-                'desa' => 'Janggalan',
+        $desasByKecamatan = [
+            'Bae' => [
+                'Bacin', 'Gondangmanis', 'Bae', 'Dersalam', 'Karangbener',
+                'Ngembalrejo', 'Panjang', 'Pedawang', 'Peganjaran', 'Purworejo'
             ],
-            [
-                'kec_id' => $kudus->id,
-                'desa' => 'Demangan',
+            'Dawe' => [
+                'Cendono', 'Colo', 'Cranggang', 'Dukuhwaringin', 'Glagah Kulon',
+                'Japan', 'Kajar', 'Kandangmas', 'Kuwukan', 'Lau',
+                'Margorejo', 'Piji', 'Puyoh', 'Rejosari', 'Samirejo',
+                'Soco', 'Tergo', 'Ternadi'
             ],
-            [
-                'kec_id' => $kudus->id,
-                'desa' => 'Mlati Lor',
+            'Gebog' => [
+                'Besito', 'Getasrabi', 'Gondosari', 'Gribig', 'Jurang',
+                'Karangmalang', 'Kedungsari', 'Klumpit', 'Menawan', 'Padurenan', 'Rahtawu'
             ],
-
-            [
-                'kec_id' => $jati->id,
-                'desa' => 'Getaspejaten',
+            'Jati' => [
+                'Getaspejaten', 'Jati Wetan', 'Jati Kulon', 'Jepangpakis', 'Jetiskapuan',
+                'Loram Kulon', 'Loram Wetan', 'Megawon', 'Ngembal Kulon', 'Pasuruhan Kidul',
+                'Pasuruhan Lor', 'Ploso', 'Tanjungkarang', 'Tumpangkrasak'
             ],
-            [
-                'kec_id' => $jati->id,
-                'desa' => 'Jati Wetan',
+            'Jekulo' => [
+                'Bulung Kulon', 'Bulungcangkring', 'Gondoharum', 'Hadipolo', 'Honggosoco',
+                'Jekulo', 'Klaling', 'Pladen', 'Sadang', 'Sidomulyo',
+                'Tanjungrejo', 'Terban'
             ],
-
-            [
-                'kec_id' => $bae->id,
-                'desa' => 'Bacin',
+            'Kaliwungu' => [
+                'Bakalankrapyak', 'Banget', 'Blimbing Kidul', 'Gamong', 'Garung Kidul',
+                'Garung Lor', 'Kaliwungu', 'Karangampel', 'Kedungdowo', 'Mijen',
+                'Papringan', 'Prambatan Kidul', 'Prambatan Lor', 'Setrokalangan', 'Sidorekso'
             ],
-            [
-                'kec_id' => $bae->id,
-                'desa' => 'Gondangmanis',
+            'Kudus' => [
+                'Janggalan', 'Demangan', 'Mlati Lor', 'Barongan', 'Burikan',
+                'Damaran', 'Demaan', 'Glantengan', 'Kaliputu', 'Kauman',
+                'Krandon', 'Langgardalem', 'Nganguk', 'Rendeng', 'Singocandi',
+                'Kramat', 'Kajeksan', 'Kerjasan', 'Mlati Kidul', 'Mlati Norowito',
+                'Panjunan', 'Purwosari', 'Sunggingan', 'Wergu Kulon', 'Wergu Wetan'
+            ],
+            'Mejobo' => [
+                'Golantepus', 'Gulang', 'Hadiwarno', 'Jepang', 'Jojo',
+                'Kesambi', 'Kirig', 'Mejobo', 'Payaman', 'Temulus', 'Tenggeles'
+            ],
+            'Undaan' => [
+                'Glagahwaru', 'Kalirejo', 'Karangrowo', 'Kutuk', 'Lambangan',
+                'Larikrejo', 'Medini', 'Ngemplak', 'Sambung', 'Terangmas',
+                'Undaan Kidul', 'Undaan Lor', 'Undaan Tengah', 'Wates', 'Wonosoco', 'Berugenjang'
             ],
         ];
 
-        foreach ($data as $item) {
-            Desa::create($item);
+        foreach ($desasByKecamatan as $kecamatanNama => $desas) {
+            $kecId = $kecamatans[$kecamatanNama] ?? null;
+            if (!$kecId) {
+                continue;
+            }
+
+            foreach ($desas as $desaNama) {
+                Desa::firstOrCreate(
+                    [
+                        'kec_id' => $kecId,
+                        'desa' => $desaNama,
+                    ]
+                );
+            }
         }
     }
 }

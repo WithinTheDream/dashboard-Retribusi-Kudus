@@ -16,9 +16,9 @@ class PengajuanController extends Controller
     {
         $query = PengajuanWajibRetribusi::with(['jenisRetribusi', 'kecamatan', 'desa', 'dokumen']);
 
-        // Jika diakses oleh warga, filter berdasarkan user_id mereka sendiri
-        if ($request->has('user_id')) {
-            $query->where('user_id', $request->user_id);
+        $userId = $request->user()?->id ?? $request->user_id;
+        if ($userId) {
+            $query->where('user_id', $userId);
         }
 
         $data = $query->latest()->get();
@@ -30,13 +30,44 @@ class PengajuanController extends Controller
         ], 200);
     }
 
-    // 2. Menyimpan pengajuan baru dari warga
+    // 2. Status pengajuan warga (endpoint khusus warga)
+    public function status(Request $request)
+    {
+        $userId = $request->user()?->id ?? $request->user_id;
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User tidak terautentikasi'
+            ], 401);
+        }
+
+        $data = PengajuanWajibRetribusi::with(['jenisRetribusi', 'kecamatan', 'desa', 'dokumen'])
+            ->where('user_id', $userId)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ], 200);
+    }
+
+    // 3. Menyimpan pengajuan baru dari warga
     public function store(Request $request)
     {
+        $userId = $request->user()?->id ?? $request->user_id;
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User tidak terautentikasi'
+            ], 401);
+        }
+
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
             'jenis_retribusi_id' => 'required|exists:jenis_retribusis,id',
-            'nik' => 'required|string|max:16',
+            'nik' => 'required|string|size:16',
             'nama_lengkap' => 'required|string|max:255',
             'kecamatan_id' => 'required|exists:kecamatans,id',
             'desa_id' => 'required|exists:desas,id',
@@ -54,16 +85,27 @@ class PengajuanController extends Controller
             ], 422);
         }
 
+        // Cek apakah masih ada pengajuan aktif
+        $existing = PengajuanWajibRetribusi::where('user_id', $userId)
+            ->whereIn('status_pengajuan', ['menunggu', 'perbaikan', 'survey'])
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda masih memiliki pengajuan aktif yang sedang diproses.'
+            ], 400);
+        }
+
         DB::beginTransaction();
         try {
-            // Generate nomor pengajuan otomatis (Contoh: REG-202608-0001)
             $tanggal = date('Ymd');
             $count = PengajuanWajibRetribusi::whereDate('created_at', today())->count() + 1;
             $nomorPengajuan = 'REG-' . $tanggal . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
             $pengajuan = PengajuanWajibRetribusi::create([
                 'nomor_pengajuan' => $nomorPengajuan,
-                'user_id' => $request->user_id,
+                'user_id' => $userId,
                 'jenis_retribusi_id' => $request->jenis_retribusi_id,
                 'nik' => $request->nik,
                 'nama_lengkap' => $request->nama_lengkap,
