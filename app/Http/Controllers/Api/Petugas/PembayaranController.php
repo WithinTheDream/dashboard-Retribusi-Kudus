@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Tagihan;
 use App\Models\Pembayaran;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PembayaranController extends Controller
 {
@@ -14,6 +15,7 @@ class PembayaranController extends Controller
     {
         $request->validate([
             'tagihan_id' => 'required|exists:tagihans,id',
+            'tanggal_bayar' => 'nullable|string',
         ]);
 
         $user = $request->user();
@@ -23,11 +25,28 @@ class PembayaranController extends Controller
 
             $tagihan = Tagihan::findOrFail($request->tagihan_id);
 
+            // Handle idempotency jika tagihan sudah lunas sebelumnya (misal dari sync sebelumnya)
             if ($tagihan->status === 'lunas') {
+                $existing = Pembayaran::where('tagihan_id', $tagihan->id)->first();
+                DB::commit();
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Tagihan ini sudah lunas.'
-                ], 400);
+                    'success' => true,
+                    'message' => 'Tagihan ini sudah lunas sebelumnya.',
+                    'data' => $existing
+                ], 200);
+            }
+
+            // Tentukan waktu bayar (prioritaskan timestamp dari offline device jika ada)
+            $waktuBayar = now();
+            $isSync = false;
+
+            if ($request->filled('tanggal_bayar')) {
+                try {
+                    $waktuBayar = Carbon::parse($request->tanggal_bayar);
+                    $isSync = true;
+                } catch (\Exception $e) {
+                    $waktuBayar = now();
+                }
             }
 
             // Ubah status tagihan
@@ -44,8 +63,8 @@ class PembayaranController extends Controller
                 'user_id' => $user->id,
                 'nominal_bayar' => $tagihan->nominal,
                 'metode_pembayaran' => 'tunai',
-                'waktu_bayar' => now(),
-                'status_sync' => false,
+                'waktu_bayar' => $waktuBayar,
+                'status_sync' => $isSync,
                 'is_setor' => false,
             ]);
 
@@ -53,7 +72,7 @@ class PembayaranController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pembayaran berhasil, status tagihan lunas.',
+                'message' => 'Pembayaran berhasil dicatat.',
                 'data' => $pembayaran
             ]);
 

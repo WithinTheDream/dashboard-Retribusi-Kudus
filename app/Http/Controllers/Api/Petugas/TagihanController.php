@@ -19,6 +19,8 @@ class TagihanController extends Controller
         if ($penugasans->isEmpty()) {
             return response()->json([
                 'success' => true,
+                'has_assignment' => false,
+                'message' => 'Akun Anda belum memiliki penugasan wilayah. Silakan hubungi Admin Dinas.',
                 'data' => []
             ]);
         }
