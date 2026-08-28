@@ -4,6 +4,14 @@
 @section('page-title', 'Laporan Rekap Retribusi')
 
 @section('content')
+@php
+    $namaBulan = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+    ];
+@endphp
+
 <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 20px;">Rekap Tagihan & Pembayaran</h3>
 
@@ -13,7 +21,7 @@
             <select name="bulan" style="display: block; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                 @for($i = 1; $i <= 12; $i++)
                     <option value="{{ $i }}" {{ $bulan == $i ? 'selected' : '' }}>
-                        {{ $i }} - {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                        {{ $i }} - {{ $namaBulan[$i] ?? $i }}
                     </option>
                 @endfor
             </select>
@@ -51,7 +59,9 @@
         </div>
     </div>
 
-    <h4 style="font-size: 15px; font-weight: bold; color: #1f2937; margin-bottom: 10px;">Rincian Pembayaran Periode {{ $bulan }}/{{ $tahun }}</h4>
+    <h4 style="font-size: 15px; font-weight: bold; color: #1f2937; margin-bottom: 10px;">
+        Rincian Pembayaran Periode {{ $namaBulan[$bulan] ?? $bulan }} {{ $tahun }}
+    </h4>
 
     <table style="width: 100%; border-collapse: collapse; text-align: left;">
         <thead>
@@ -68,7 +78,7 @@
         <tbody>
             @forelse($pembayarans as $index => $item)
                 <tr style="border-bottom: 1px solid #e5e7eb;">
-                    <td style="padding: 12px;">{{ $index + 1 }}</td>
+                    <td style="padding: 12px;">{{ $pembayarans->firstItem() + $index }}</td>
                     <td style="padding: 12px; font-weight: bold;">{{ $item->nomor_pembayaran }}</td>
                     <td style="padding: 12px;">{{ $item->tagihan->nomor_tagihan ?? '-' }}</td>
                     <td style="padding: 12px;">{{ $item->tagihan->wajibRetribusi->nama_lengkap ?? '-' }}</td>
@@ -76,7 +86,7 @@
                         Rp {{ number_format($item->nominal_bayar, 0, ',', '.') }}
                     </td>
                     <td style="padding: 12px; text-transform: capitalize;">{{ $item->metode_pembayaran }}</td>
-                    <td style="padding: 12px;">{{ $item->waktu_bayar->format('d/m/Y H:i') }}</td>
+                    <td style="padding: 12px;">{{ $item->waktu_bayar ? \Carbon\Carbon::parse($item->waktu_bayar)->format('d/m/Y H:i') : '-' }}</td>
                 </tr>
             @empty
                 <tr>

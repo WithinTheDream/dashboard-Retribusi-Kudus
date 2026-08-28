@@ -53,7 +53,7 @@
 
             <div>
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">Waktu Bayar</label>
-                <input type="datetime-local" name="waktu_bayar" value="{{ old('waktu_bayar', $pembayaran->waktu_bayar ? $pembayaran->waktu_bayar->format('Y-m-d\TH:i') : '') }}" required style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                <input type="datetime-local" name="waktu_bayar" value="{{ old('waktu_bayar', $pembayaran->waktu_bayar ? \Carbon\Carbon::parse($pembayaran->waktu_bayar)->format('Y-m-d\TH:i') : '') }}" required style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                 @error('waktu_bayar')<small style="color: red;">{{ $message }}</small>@enderror
             </div>
         </div>
