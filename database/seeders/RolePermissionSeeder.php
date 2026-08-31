@@ -12,13 +12,11 @@ class RolePermissionSeeder extends Seeder
     {
         $allPermissions = Permission::pluck('id')->all();
 
-        // 1. Super Admin: Akses Penuh ke Semua Menu & Modul
         Role::where('name', 'super_admin')
             ->first()
             ?->permissions()
             ->sync($allPermissions);
 
-        // 2. Admin Dinas: Operasional Utama (Master, Operasional, Laporan, Kelola Pengguna Non-Admin)
         $this->syncRole(
             'admin_dinas',
             [
@@ -26,7 +24,6 @@ class RolePermissionSeeder extends Seeder
                 'users.view',
                 'users.create',
                 'users.update',
-                'users.delete',
                 'wilayah.view',
                 'wilayah.create',
                 'wilayah.update',
@@ -39,72 +36,70 @@ class RolePermissionSeeder extends Seeder
                 'tarif.create',
                 'tarif.update',
                 'tarif.delete',
+                'pengajuan.view',
+                'pengajuan.verify',
+                'tagihan.view',
+                'tagihan.create',
+                'tagihan.update',
+                'pembayaran.view',
+                'laporan.view',
+                'laporan.export',
                 'wajib_retribusi.view',
                 'wajib_retribusi.create',
                 'wajib_retribusi.update',
                 'wajib_retribusi.delete',
-                'pengajuan.view',
-                'pengajuan.create',
-                'pengajuan.update',
-                'pengajuan.verify',
-                'pengajuan.delete',
-                'tagihan.view',
-                'tagihan.create',
-                'tagihan.update',
-                'tagihan.delete',
-                'pembayaran.view',
-                'pembayaran.create',
-                'pembayaran.update',
-                'pembayaran.delete',
-                'setoran.view',
-                'penugasan.view',
-                'penugasan.create',
-                'penugasan.update',
-                'penugasan.delete',
-                'laporan.view',
-                'laporan.export',
-                'audit.view',
+                'petugas.view',
+                'petugas.create',
+                'petugas.update',
+                'petugas.delete',
+                'banner.view',
+                'banner.create',
+                'banner.update',
+                'banner.delete',
             ]
         );
 
-        // 3. Bendahara: Verifikasi Finansial, Pembayaran, Setoran, dan Laporan Kas
-        $this->syncRole(
-            'bendahara',
-            [
-                'dashboard.view',
-                'tagihan.view',
-                'pembayaran.view',
-                'setoran.view',
-                'setoran.verify',
-                'laporan.view',
-                'laporan.export',
-            ]
-        );
-
-        // 4. Pimpinan / Kepala Dinas: Monitoring Eksekutif & Laporan (Read-Only)
-        $this->syncRole(
-            'pimpinan',
-            [
-                'dashboard.view',
-                'laporan.view',
-                'laporan.export',
-            ]
-        );
-
-        // 5. Petugas Lapangan: Mobile App Penagihan
         $this->syncRole(
             'petugas',
             [
                 'dashboard.view',
+                'wilayah.view',
+                'jenis_retribusi.view',
+                'tarif.view',
+                'pengajuan.view',
                 'tagihan.view',
                 'pembayaran.view',
                 'pembayaran.create',
-                'setoran.view',
-                'setoran.create',
             ]
         );
 
-        // 6. User / Warga: Mobile App Pengajuan & Info Tagihan Pribadi
+        $this->syncRole(
+            'bendahara',
+            [
+                'dashboard.view',
+                'pembayaran.view',
+                'pembayaran.verify',
+                'laporan.view',
+                'laporan.export',
+            ]
+        );
+
+        $this->syncRole(
+            'pimpinan',
+            [
+                'dashboard.view',
+                'wilayah.view',
+                'jenis_retribusi.view',
+                'tarif.view',
+                'pengajuan.view',
+                'tagihan.view',
+                'pembayaran.view',
+                'laporan.view',
+                'laporan.export',
+                'wajib_retribusi.view',
+            ]
+        );
+
         $this->syncRole(
             'user',
             [
@@ -114,6 +109,7 @@ class RolePermissionSeeder extends Seeder
                 'pengajuan.update',
                 'tagihan.view',
                 'pembayaran.view',
+                'pembayaran.create',
             ]
         );
     }

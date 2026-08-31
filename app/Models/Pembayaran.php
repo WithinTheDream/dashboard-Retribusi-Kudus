@@ -11,12 +11,27 @@ class Pembayaran extends Model
 
     protected $guarded = ['id'];
 
+    protected function casts(): array
+    {
+        return [
+            'waktu_bayar' => 'datetime',
+            'nominal_bayar' => 'integer',
+            'status_sync' => 'boolean',
+            'is_setor' => 'boolean',
+        ];
+    }
+
     public function tagihan()
     {
         return $this->belongsTo(Tagihan::class, 'tagihan_id');
     }
 
     public function petugas()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

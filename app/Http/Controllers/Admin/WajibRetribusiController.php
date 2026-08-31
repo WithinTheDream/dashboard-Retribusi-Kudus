@@ -39,6 +39,17 @@ class WajibRetribusiController extends Controller
     public function store(Request $request)
     {
         abort_if(!auth()->user()->hasPermission('wajib_retribusi.create'), 403);
+
+        if ($request->filled('koordinat') && (!$request->filled('latitude') || !$request->filled('longitude'))) {
+            $parts = preg_split('/[,\s]+/', trim($request->input('koordinat')));
+            if (count($parts) >= 2) {
+                $request->merge([
+                    'latitude' => $parts[0],
+                    'longitude' => $parts[1],
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'kode' => ['required', 'string', 'max:255', 'unique:wajib_retribusis,kode'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
@@ -51,6 +62,8 @@ class WajibRetribusiController extends Controller
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
             'no_hp' => ['required', 'string', 'max:20'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
             'status_aktif' => ['boolean'],
         ]);
 
@@ -73,6 +86,8 @@ class WajibRetribusiController extends Controller
             'alamat'             => $validated['alamat'],
             'rt'                 => $validated['rt'],
             'rw'                 => $validated['rw'],
+            'lat'                => $validated['latitude'],
+            'lokasi_long'        => $validated['longitude'],
             'no_hp'              => $validated['no_hp'],
             'status_pengajuan'   => 'disetujui',
             'catatan_admin'      => 'Didaftarkan manual oleh Admin',
@@ -111,6 +126,17 @@ class WajibRetribusiController extends Controller
     public function update(Request $request, WajibRetribusi $wajibRetribusi)
     {
         abort_if(!auth()->user()->hasPermission('wajib_retribusi.update'), 403);
+
+        if ($request->filled('koordinat') && (!$request->filled('latitude') || !$request->filled('longitude'))) {
+            $parts = preg_split('/[,\s]+/', trim($request->input('koordinat')));
+            if (count($parts) >= 2) {
+                $request->merge([
+                    'latitude' => $parts[0],
+                    'longitude' => $parts[1],
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'kode' => [
                 'required', 'string', 'max:255',
@@ -126,6 +152,8 @@ class WajibRetribusiController extends Controller
             'alamat' => ['required', 'string'],
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
             'no_hp' => ['required', 'string', 'max:20'],
             'status_aktif' => ['boolean'],
         ]);

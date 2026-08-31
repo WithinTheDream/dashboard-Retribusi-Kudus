@@ -16,11 +16,12 @@ class SetoranController extends Controller
     {
         $user = $request->user();
         
-        // Ambil pembayaran tunai yang belum disetor oleh petugas ini
-        $pembayarans = Pembayaran::with('tagihan.wajibRetribusi')
+        // Ambil pembayaran tunai hari ini yang belum disetor
+        $pembayarans = Pembayaran::with('tagihan')
             ->where('user_id', $user->id)
             ->where('metode_pembayaran', 'tunai')
             ->where('is_setor', false)
+            ->whereDate('waktu_bayar', Carbon::today())
             ->get();
 
         $totalUang = $pembayarans->sum('nominal_bayar');
@@ -28,9 +29,9 @@ class SetoranController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'total_uang'       => $totalUang,
+                'total_uang' => $totalUang,
                 'jumlah_transaksi' => $pembayarans->count(),
-                'rincian'          => $pembayarans
+                'rincian' => $pembayarans
             ]
         ]);
     }
@@ -45,28 +46,27 @@ class SetoranController extends Controller
             $pembayarans = Pembayaran::where('user_id', $user->id)
                 ->where('metode_pembayaran', 'tunai')
                 ->where('is_setor', false)
+                ->whereDate('waktu_bayar', Carbon::today())
                 ->get();
 
             if ($pembayarans->isEmpty()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tidak ada penerimaan pembayaran tunai yang perlu disetorkan saat ini.'
+                    'message' => 'Tidak ada setoran untuk disubmit hari ini.'
                 ], 400);
             }
 
             $totalUang = $pembayarans->sum('nominal_bayar');
 
-            // Generate nomor setoran (Contoh: SET-20260826-0001)
-            $countToday = Setoran::whereDate('created_at', today())->count() + 1;
-            $nomorSetoran = 'SET-' . date('Ymd') . '-' . str_pad($countToday, 4, '0', STR_PAD_LEFT);
+            // Generate nomor setoran unik
+            $noSetoran = 'SET-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
             $setoran = Setoran::create([
-                'nomor_setoran'  => $nomorSetoran,
-                'user_id'        => $user->id,
-                'tanggal_setor'  => now()->toDateString(),
-                'total_setoran'  => $totalUang,
-                'status_setoran' => 'menunggu',
-                'catatan'        => $request->catatan ?? null,
+                'nomor_setoran'   => $noSetoran,
+                'user_id'         => $user->id,
+                'tanggal_setor'   => now()->toDateString(),
+                'total_setoran'   => $totalUang,
+                'status_setoran'  => 'menunggu',
             ]);
 
             foreach ($pembayarans as $p) {
@@ -75,7 +75,7 @@ class SetoranController extends Controller
                     'pembayaran_id' => $p->id,
                 ]);
 
-                // Tandai pembayaran sudah masuk dalam bundle setoran
+                // Update status pembayaran menjadi sudah disetor
                 $p->is_setor = true;
                 $p->save();
             }
@@ -84,16 +84,16 @@ class SetoranController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Setoran berhasil disubmit ke bendahara.',
-                'data'    => $setoran->load('details.pembayaran.tagihan.wajibRetribusi')
-            ], 201);
+                'message' => 'Setoran berhasil dikirim ke bendahara.',
+                'data' => $setoran
+            ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memproses setoran.',
-                'error'   => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }

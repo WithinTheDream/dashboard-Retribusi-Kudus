@@ -105,4 +105,9 @@ class User extends Authenticatable
         return $this->roleRelation?->name === $role
             || $this->role === $role;
     }
+
+    public function penugasanWilayahs()
+    {
+        return $this->hasMany(PenugasanWilayah::class, 'user_id');
+    }
 }

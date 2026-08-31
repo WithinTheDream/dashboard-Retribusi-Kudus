@@ -73,6 +73,16 @@ class PermissionSeeder extends Seeder
             ['name' => 'wajib_retribusi.create', 'display_name' => 'Menambah Wajib Retribusi', 'module' => 'wajib_retribusi'],
             ['name' => 'wajib_retribusi.update', 'display_name' => 'Mengubah Wajib Retribusi', 'module' => 'wajib_retribusi'],
             ['name' => 'wajib_retribusi.delete', 'display_name' => 'Menghapus Wajib Retribusi', 'module' => 'wajib_retribusi'],
+
+            ['name' => 'petugas.view', 'display_name' => 'Melihat Petugas', 'module' => 'petugas'],
+            ['name' => 'petugas.create', 'display_name' => 'Menambah Petugas & Wilayah', 'module' => 'petugas'],
+            ['name' => 'petugas.update', 'display_name' => 'Mengubah Petugas & Penugasan', 'module' => 'petugas'],
+            ['name' => 'petugas.delete', 'display_name' => 'Menghapus Petugas', 'module' => 'petugas'],
+
+            ['name' => 'banner.view', 'display_name' => 'Melihat Banner', 'module' => 'banner'],
+            ['name' => 'banner.create', 'display_name' => 'Menambah Banner', 'module' => 'banner'],
+            ['name' => 'banner.update', 'display_name' => 'Mengubah Banner', 'module' => 'banner'],
+            ['name' => 'banner.delete', 'display_name' => 'Menghapus Banner', 'module' => 'banner'],
         ];
 
         foreach ($permissions as $permission) {

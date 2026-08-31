@@ -10,12 +10,7 @@ class PenugasanWilayah extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'kecamatan_id',
-        'desa_id',
-        'rw',
-    ];
+    protected $guarded = ['id'];
 
     public function user(): BelongsTo
     {

@@ -2,25 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SetoranDetail extends Model
 {
-    use HasFactory;
+    protected $guarded = ['id'];
 
-    protected $fillable = [
-        'setoran_id',
-        'pembayaran_id',
-    ];
-
-    public function setoran(): BelongsTo
+    public function setoran()
     {
         return $this->belongsTo(Setoran::class, 'setoran_id');
     }
 
-    public function pembayaran(): BelongsTo
+    public function pembayaran()
     {
         return $this->belongsTo(Pembayaran::class, 'pembayaran_id');
     }

@@ -13,7 +13,9 @@ class WargaDashboardController extends Controller
     {
         $user = $request->user();
 
-        $wajibRetribusi = WajibRetribusi::where('user_id', $user->id)->first();
+        $wajibRetribusi = WajibRetribusi::with(['kecamatan', 'desa', 'jenisRetribusi'])
+            ->where('user_id', $user->id)
+            ->first();
 
         if (!$wajibRetribusi) {
             return response()->json([
