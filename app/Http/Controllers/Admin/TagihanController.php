@@ -13,7 +13,7 @@ class TagihanController extends Controller
     public function index()
     {
         abort_if(!auth()->user()->hasPermission('tagihan.view'), 403);
-        $tagihans = Tagihan::with('wajibRetribusi')
+        $tagihans = Tagihan::with(['wajibRetribusi.desa', 'wajibRetribusi.jenisRetribusi'])
             ->latest()
             ->paginate(10);
 
@@ -33,7 +33,9 @@ class TagihanController extends Controller
     public function create()
     {
         abort_if(!auth()->user()->hasPermission('tagihan.create'), 403);
-        $wajibRetribusis = WajibRetribusi::all();
+        $wajibRetribusis = WajibRetribusi::with(['jenisRetribusi.tarifs', 'desa'])
+            ->where('status_aktif', true)
+            ->get();
 
         return view('admin.tagihan.create', compact('wajibRetribusis'));
     }
@@ -41,29 +43,41 @@ class TagihanController extends Controller
     public function store(Request $request)
     {
         abort_if(!auth()->user()->hasPermission('tagihan.create'), 403);
+
         $validated = $request->validate([
             'nomor_tagihan' => [
-                'required', 'string', 'max:255',
+                'nullable', 'string', 'max:255',
                 'unique:tagihans,nomor_tagihan',
             ],
             'wajib_retribusi_id' => ['required', 'exists:wajib_retribusis,id'],
             'bulan' => ['required', 'integer', 'between:1,12'],
             'tahun' => ['required', 'integer', 'min:2020', 'max:2099'],
-            'nominal' => ['required', 'numeric', 'min:0'],
+            'nominal' => ['nullable', 'numeric', 'min:0'],
             'status' => ['required', 'in:belum_bayar,lunas,dibatalkan'],
         ]);
+
+        $wr = WajibRetribusi::with('jenisRetribusi.tarifs')->findOrFail($validated['wajib_retribusi_id']);
+        
+        // Ambil nominal otomatis dari master tarif jika tidak diinput manual
+        $masterTarif = $wr->jenisRetribusi?->tarifs?->first()?->nominal ?? 0;
+        $validated['nominal'] = $validated['nominal'] ?? $masterTarif;
+
+        // Auto-generate nomor tagihan jika kosong
+        if (empty($validated['nomor_tagihan'])) {
+            $validated['nomor_tagihan'] = 'INV-' . $validated['tahun'] . str_pad($validated['bulan'], 2, '0', STR_PAD_LEFT) . '-' . str_pad($wr->id, 4, '0', STR_PAD_LEFT);
+        }
 
         Tagihan::create($validated);
 
         return redirect()
             ->route('admin.tagihan.index')
-            ->with('success', 'Data tagihan berhasil ditambahkan.');
+            ->with('success', 'Data tagihan berhasil ditambahkan dengan tarif otomatis dari data master.');
     }
 
     public function edit(Tagihan $tagihan)
     {
         abort_if(!auth()->user()->hasPermission('tagihan.update'), 403);
-        $wajibRetribusis = WajibRetribusi::all();
+        $wajibRetribusis = WajibRetribusi::with(['jenisRetribusi.tarifs', 'desa'])->get();
 
         return view('admin.tagihan.edit', compact(
             'tagihan', 'wajibRetribusis'

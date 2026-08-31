@@ -108,6 +108,20 @@
             </div>
         </div>
 
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Latitude (Wajib Titik Koordinat)</label>
+                <input type="number" step="any" name="lat" value="{{ old('lat', $pengajuan->lat) }}" required placeholder="Contoh: -6.8048123" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                @error('lat')<small style="color: red;">{{ $message }}</small>@enderror
+            </div>
+
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Longitude (Wajib Titik Koordinat)</label>
+                <input type="number" step="any" name="lokasi_long" value="{{ old('lokasi_long', $pengajuan->lokasi_long) }}" required placeholder="Contoh: 110.8405123" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                @error('lokasi_long')<small style="color: red;">{{ $message }}</small>@enderror
+            </div>
+        </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
             <div>
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">Status Pengajuan</label>

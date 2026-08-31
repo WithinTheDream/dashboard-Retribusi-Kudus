@@ -51,6 +51,8 @@ class WajibRetribusiController extends Controller
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
             'no_hp' => ['required', 'string', 'max:20'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
             'status_aktif' => ['boolean'],
         ]);
 
@@ -73,6 +75,8 @@ class WajibRetribusiController extends Controller
             'alamat'             => $validated['alamat'],
             'rt'                 => $validated['rt'],
             'rw'                 => $validated['rw'],
+            'lat'                => $validated['latitude'],
+            'lokasi_long'        => $validated['longitude'],
             'no_hp'              => $validated['no_hp'],
             'status_pengajuan'   => 'disetujui',
             'catatan_admin'      => 'Didaftarkan manual oleh Admin',
@@ -126,6 +130,8 @@ class WajibRetribusiController extends Controller
             'alamat' => ['required', 'string'],
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
             'no_hp' => ['required', 'string', 'max:20'],
             'status_aktif' => ['boolean'],
         ]);

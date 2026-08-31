@@ -48,8 +48,8 @@ class PengajuanController extends Controller
             'alamat' => ['required', 'string'],
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
-            'lat' => ['nullable', 'string'],
-            'lokasi_long' => ['nullable', 'string'],
+            'lat' => ['required', 'numeric', 'between:-90,90'],
+            'lokasi_long' => ['required', 'numeric', 'between:-180,180'],
             'no_hp' => ['required', 'string', 'max:20'],
             'status_pengajuan' => [
                 'required', 'in:menunggu,perbaikan,survey,ditolak,disetujui',
@@ -95,8 +95,8 @@ class PengajuanController extends Controller
             'alamat' => ['required', 'string'],
             'rt' => ['required', 'string', 'max:3'],
             'rw' => ['required', 'string', 'max:3'],
-            'lat' => ['nullable', 'string'],
-            'lokasi_long' => ['nullable', 'string'],
+            'lat' => ['required', 'numeric', 'between:-90,90'],
+            'lokasi_long' => ['required', 'numeric', 'between:-180,180'],
             'no_hp' => ['required', 'string', 'max:20'],
             'status_pengajuan' => [
                 'required', 'in:menunggu,perbaikan,survey,ditolak,disetujui',

@@ -75,6 +75,8 @@ class PengajuanController extends Controller
             'rt' => 'required|string|max:3',
             'rw' => 'required|string|max:3',
             'no_hp' => 'required|string',
+            'lat' => 'required|numeric',
+            'lokasi_long' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {

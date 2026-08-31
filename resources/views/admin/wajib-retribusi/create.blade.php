@@ -88,7 +88,7 @@
             @error('alamat')<small style="color: red;">{{ $message }}</small>@enderror
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
             <div>
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">RT</label>
                 <input type="text" name="rt" value="{{ old('rt') }}" maxlength="3" required placeholder="Contoh: 001" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
@@ -99,6 +99,20 @@
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">RW</label>
                 <input type="text" name="rw" value="{{ old('rw') }}" maxlength="3" required placeholder="Contoh: 005" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                 @error('rw')<small style="color: red;">{{ $message }}</small>@enderror
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Latitude (Wajib Titik Koordinat)</label>
+                <input type="number" step="any" name="latitude" value="{{ old('latitude') }}" required placeholder="Contoh: -6.8048123" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                @error('latitude')<small style="color: red;">{{ $message }}</small>@enderror
+            </div>
+
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Longitude (Wajib Titik Koordinat)</label>
+                <input type="number" step="any" name="longitude" value="{{ old('longitude') }}" required placeholder="Contoh: 110.8405123" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                @error('longitude')<small style="color: red;">{{ $message }}</small>@enderror
             </div>
         </div>
 
