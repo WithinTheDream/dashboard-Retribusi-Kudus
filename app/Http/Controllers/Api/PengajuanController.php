@@ -65,6 +65,16 @@ class PengajuanController extends Controller
             ], 401);
         }
 
+        if ($request->filled('koordinat') && (!$request->filled('lat') || !$request->filled('lokasi_long'))) {
+            $parts = preg_split('/[,\s]+/', trim($request->input('koordinat')));
+            if (count($parts) >= 2) {
+                $request->merge([
+                    'lat' => $parts[0],
+                    'lokasi_long' => $parts[1],
+                ]);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
             'jenis_retribusi_id' => 'required|exists:jenis_retribusis,id',
             'nik' => 'required|string|size:16',

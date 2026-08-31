@@ -34,6 +34,16 @@ class PengajuanController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->filled('koordinat') && (!$request->filled('lat') || !$request->filled('lokasi_long'))) {
+            $parts = preg_split('/[,\s]+/', trim($request->input('koordinat')));
+            if (count($parts) >= 2) {
+                $request->merge([
+                    'lat' => $parts[0],
+                    'lokasi_long' => $parts[1],
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'nomor_pengajuan' => [
                 'required', 'string', 'max:255',
@@ -80,6 +90,16 @@ class PengajuanController extends Controller
         Request $request,
         PengajuanWajibRetribusi $pengajuan
     ) {
+        if ($request->filled('koordinat') && (!$request->filled('lat') || !$request->filled('lokasi_long'))) {
+            $parts = preg_split('/[,\s]+/', trim($request->input('koordinat')));
+            if (count($parts) >= 2) {
+                $request->merge([
+                    'lat' => $parts[0],
+                    'lokasi_long' => $parts[1],
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'nomor_pengajuan' => [
                 'required', 'string', 'max:255',

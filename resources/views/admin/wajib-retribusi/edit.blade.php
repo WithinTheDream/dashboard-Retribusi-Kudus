@@ -108,18 +108,16 @@
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div>
-                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Latitude (Wajib Titik Koordinat)</label>
-                <input type="number" step="any" name="latitude" value="{{ old('latitude', $wajibRetribusi->latitude ?? $wajibRetribusi->lat) }}" required placeholder="Contoh: -6.8048123" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
-                @error('latitude')<small style="color: red;">{{ $message }}</small>@enderror
-            </div>
-
-            <div>
-                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Longitude (Wajib Titik Koordinat)</label>
-                <input type="number" step="any" name="longitude" value="{{ old('longitude', $wajibRetribusi->longitude ?? $wajibRetribusi->lokasi_long) }}" required placeholder="Contoh: 110.8405123" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
-                @error('longitude')<small style="color: red;">{{ $message }}</small>@enderror
-            </div>
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold; margin-bottom: 5px; display: block;">Titik Koordinat Google Maps (Latitude, Longitude)</label>
+            @php
+                $currentCoord = ($wajibRetribusi->latitude && $wajibRetribusi->longitude) ? $wajibRetribusi->latitude . ', ' . $wajibRetribusi->longitude : '';
+            @endphp
+            <input type="text" name="koordinat" value="{{ old('koordinat', $currentCoord) }}" required placeholder="Contoh: -6.804825, 110.840660" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+            <small style="color: #6b7280; display: block; margin-top: 4px;">Cukup salin & tempel titik koordinat dari Google Maps (format: lat, long)</small>
+            @error('latitude')<small style="color: red; display: block;">{{ $message }}</small>@enderror
+            @error('longitude')<small style="color: red; display: block;">{{ $message }}</small>@enderror
+            @error('koordinat')<small style="color: red; display: block;">{{ $message }}</small>@enderror
         </div>
 
         <div style="margin-bottom: 20px;">

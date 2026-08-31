@@ -39,6 +39,17 @@ class WajibRetribusiController extends Controller
     public function store(Request $request)
     {
         abort_if(!auth()->user()->hasPermission('wajib_retribusi.create'), 403);
+
+        if ($request->filled('koordinat') && (!$request->filled('latitude') || !$request->filled('longitude'))) {
+            $parts = preg_split('/[,\s]+/', trim($request->input('koordinat')));
+            if (count($parts) >= 2) {
+                $request->merge([
+                    'latitude' => $parts[0],
+                    'longitude' => $parts[1],
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'kode' => ['required', 'string', 'max:255', 'unique:wajib_retribusis,kode'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
@@ -115,6 +126,17 @@ class WajibRetribusiController extends Controller
     public function update(Request $request, WajibRetribusi $wajibRetribusi)
     {
         abort_if(!auth()->user()->hasPermission('wajib_retribusi.update'), 403);
+
+        if ($request->filled('koordinat') && (!$request->filled('latitude') || !$request->filled('longitude'))) {
+            $parts = preg_split('/[,\s]+/', trim($request->input('koordinat')));
+            if (count($parts) >= 2) {
+                $request->merge([
+                    'latitude' => $parts[0],
+                    'longitude' => $parts[1],
+                ]);
+            }
+        }
+
         $validated = $request->validate([
             'kode' => [
                 'required', 'string', 'max:255',
