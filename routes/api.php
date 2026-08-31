@@ -18,6 +18,7 @@ Route::prefix('mobile')->group(function () {
     // Public Auth routes
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [\App\Http\Controllers\Api\Auth\RegisterController::class, 'register']);
+    Route::get('/banners', [\App\Http\Controllers\Api\BannerApiController::class, 'index']);
 
     // Protected routes (Butuh Token)
     Route::middleware('auth:sanctum')->group(function () {

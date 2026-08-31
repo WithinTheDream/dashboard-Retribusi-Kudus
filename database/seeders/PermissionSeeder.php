@@ -62,6 +62,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'petugas.create', 'display_name' => 'Menambah Petugas & Wilayah', 'module' => 'petugas'],
             ['name' => 'petugas.update', 'display_name' => 'Mengubah Petugas & Penugasan', 'module' => 'petugas'],
             ['name' => 'petugas.delete', 'display_name' => 'Menghapus Petugas', 'module' => 'petugas'],
+
+            ['name' => 'banner.view', 'display_name' => 'Melihat Banner', 'module' => 'banner'],
+            ['name' => 'banner.create', 'display_name' => 'Menambah Banner', 'module' => 'banner'],
+            ['name' => 'banner.update', 'display_name' => 'Mengubah Banner', 'module' => 'banner'],
+            ['name' => 'banner.delete', 'display_name' => 'Menghapus Banner', 'module' => 'banner'],
         ];
 
         foreach ($permissions as $permission) {

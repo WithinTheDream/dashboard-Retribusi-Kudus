@@ -58,27 +58,24 @@ class SetoranController extends Controller
 
             $totalUang = $pembayarans->sum('nominal_bayar');
 
-            // Generate nomor referensi
-            $noReferensi = 'SET-' . date('Ymd') . '-' . rand(1000, 9999);
+            // Generate nomor setoran unik
+            $noSetoran = 'SET-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
             $setoran = Setoran::create([
-                'nomor_referensi' => $noReferensi,
-                'petugas_id' => $user->id,
-                // 'bendahara_id' => null, // diisi nanti oleh bendahara
-                'tanggal_setor' => now(),
-                'total_nominal' => $totalUang,
-                'status' => 'pending',
-                'metode_setoran' => 'tunai', // atau transfer
+                'nomor_setoran'   => $noSetoran,
+                'user_id'         => $user->id,
+                'tanggal_setor'   => now()->toDateString(),
+                'total_setoran'   => $totalUang,
+                'status_setoran'  => 'menunggu',
             ]);
 
             foreach ($pembayarans as $p) {
                 SetoranDetail::create([
-                    'setoran_id' => $setoran->id,
+                    'setoran_id'    => $setoran->id,
                     'pembayaran_id' => $p->id,
-                    'nominal' => $p->nominal_bayar,
                 ]);
 
-                // Update status verifikasi pembayaran
+                // Update status pembayaran menjadi sudah disetor
                 $p->is_setor = true;
                 $p->save();
             }
@@ -87,7 +84,7 @@ class SetoranController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Setoran berhasil dikirim.',
+                'message' => 'Setoran berhasil dikirim ke bendahara.',
                 'data' => $setoran
             ]);
 
@@ -96,7 +93,7 @@ class SetoranController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat memproses setoran.',
-                'error' => $e->getMessage()
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }

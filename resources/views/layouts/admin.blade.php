@@ -255,6 +255,12 @@
                 </a>
             @endif
 
+            @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermission('banner.view'))
+                <a href="{{ route('admin.banners.index') }}" class="{{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
+                    Banner Slideshow
+                </a>
+            @endif
+
         </div>
 
     </aside>

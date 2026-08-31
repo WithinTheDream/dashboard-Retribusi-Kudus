@@ -123,6 +123,8 @@ class PengajuanController extends Controller
                     'rw' => $pengajuan->rw,
                     'lokasi_long' => $pengajuan->lokasi_long,
                     'lat' => $pengajuan->lat,
+                    'latitude' => $pengajuan->lat ?? null,
+                    'longitude' => $pengajuan->lokasi_long ?? null,
                     'no_hp' => $pengajuan->no_hp,
                     'jenis_retribusi_id' => $pengajuan->jenis_retribusi_id,
                     'status_aktif' => true,

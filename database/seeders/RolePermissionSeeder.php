@@ -52,6 +52,10 @@ class RolePermissionSeeder extends Seeder
                 'petugas.create',
                 'petugas.update',
                 'petugas.delete',
+                'banner.view',
+                'banner.create',
+                'banner.update',
+                'banner.delete',
             ]
         );
 

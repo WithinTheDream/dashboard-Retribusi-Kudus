@@ -112,4 +112,10 @@ Route::middleware(['auth', 'admin'])
             \App\Http\Controllers\Admin\RoleController::class
         )->except(['show']);
 
+        // 9. Master Konten: Banner Slideshow
+        Route::resource(
+            'banners',
+            \App\Http\Controllers\Admin\BannerController::class
+        )->except(['show']);
+
 });
