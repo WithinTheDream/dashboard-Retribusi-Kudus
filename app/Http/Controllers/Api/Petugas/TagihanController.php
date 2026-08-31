@@ -45,10 +45,13 @@ class TagihanController extends Controller
                 $query->where(function ($q) use ($penugasans) {
                     foreach ($penugasans as $penugasan) {
                         $q->orWhere(function ($subQ) use ($penugasan) {
-                            $subQ->where('kecamatan_id', $penugasan->kecamatan_id)
-                                 ->where('desa_id', $penugasan->desa_id);
+                            $subQ->where('kecamatan_id', $penugasan->kecamatan_id);
+
+                            if (!empty($penugasan->desa_id)) {
+                                $subQ->where('desa_id', $penugasan->desa_id);
+                            }
                             
-                            if ($penugasan->rw) {
+                            if (!empty($penugasan->rw)) {
                                 $subQ->where('rw', $penugasan->rw);
                             }
                         });

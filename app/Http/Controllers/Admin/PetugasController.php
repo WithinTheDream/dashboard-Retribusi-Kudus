@@ -49,7 +49,7 @@ class PetugasController extends Controller
             'no_hp'        => ['required', 'string', 'max:20'],
             'password'     => ['required', 'string', 'min:6'],
             'kecamatan_id' => ['required', 'exists:kecamatans,id'],
-            'desa_id'      => ['required', 'exists:desas,id'],
+            'desa_id'      => ['nullable', 'exists:desas,id'],
             'rw'           => ['nullable', 'string', 'max:3'],
         ]);
 
@@ -70,7 +70,7 @@ class PetugasController extends Controller
         PenugasanWilayah::create([
             'user_id'      => $user->id,
             'kecamatan_id' => $validated['kecamatan_id'],
-            'desa_id'      => $validated['desa_id'],
+            'desa_id'      => !empty($validated['desa_id']) ? $validated['desa_id'] : null,
             'rw'           => !empty($validated['rw']) ? str_pad($validated['rw'], 3, '0', STR_PAD_LEFT) : null,
         ]);
 
@@ -112,7 +112,7 @@ class PetugasController extends Controller
             'no_hp'        => ['required', 'string', 'max:20'],
             'password'     => ['nullable', 'string', 'min:6'],
             'kecamatan_id' => ['required', 'exists:kecamatans,id'],
-            'desa_id'      => ['required', 'exists:desas,id'],
+            'desa_id'      => ['nullable', 'exists:desas,id'],
             'rw'           => ['nullable', 'string', 'max:3'],
         ]);
 
@@ -132,7 +132,7 @@ class PetugasController extends Controller
         // Update atau buat penugasan wilayah
         $penugasanData = [
             'kecamatan_id' => $validated['kecamatan_id'],
-            'desa_id'      => $validated['desa_id'],
+            'desa_id'      => !empty($validated['desa_id']) ? $validated['desa_id'] : null,
             'rw'           => !empty($validated['rw']) ? str_pad($validated['rw'], 3, '0', STR_PAD_LEFT) : null,
         ];
 

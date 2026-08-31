@@ -89,15 +89,18 @@
             </div>
 
             <div>
-                <label style="font-weight: 600; font-size: 13px; margin-bottom: 5px; display: block;">Desa / Kelurahan Penugasan *</label>
-                <select name="desa_id" id="desa_id" required style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: white;">
-                    <option value="">-- Pilih Desa --</option>
+                <label style="font-weight: 600; font-size: 13px; margin-bottom: 5px; display: block;">Desa / Kelurahan Penugasan (Opsional)</label>
+                <select name="desa_id" id="desa_id" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: white;">
+                    <option value="">-- Seluruh Desa di Kecamatan (Default) --</option>
                     @foreach($desas as $desa)
                         <option value="{{ $desa->id }}" {{ $currentDesaId == $desa->id ? 'selected' : '' }}>
                             {{ $desa->desa }}
                         </option>
                     @endforeach
                 </select>
+                <small style="color: #6b7280; font-size: 12px; margin-top: 4px; display: block;">
+                    Kosongkan jika petugas bertanggung jawab menagih seluruh desa di kecamatan ini.
+                </small>
                 @error('desa_id')<small style="color: #ef4444; font-size: 12px;">{{ $message }}</small>@enderror
             </div>
         </div>
@@ -108,7 +111,7 @@
             </label>
             <input type="text" name="rw" value="{{ $currentRw }}" maxlength="3" placeholder="Contoh: 001 (Kosongkan jika bertugas untuk 1 desa penuh)" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
             <small style="color: #6b7280; font-size: 12px; margin-top: 4px; display: block;">
-                Jika dikosongkan, petugas bertanggung jawab menagih seluruh RW di desa tersebut.
+                Jika dikosongkan, petugas bertanggung jawab menagih seluruh RW di desa/kecamatan tersebut.
             </small>
             @error('rw')<small style="color: #ef4444; font-size: 12px;">{{ $message }}</small>@enderror
         </div>
@@ -134,21 +137,21 @@
         desaSelect.innerHTML = '<option value="">Memuat daftar desa...</option>';
 
         if (!kecamatanId) {
-            desaSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+            desaSelect.innerHTML = '<option value="">-- Seluruh Desa di Kecamatan (Default) --</option>';
             return;
         }
 
         fetch('{{ route("admin.api.desa-by-kecamatan", ":id") }}'.replace(':id', kecamatanId))
             .then(response => response.json())
             .then(data => {
-                let options = '<option value="">-- Pilih Desa --</option>';
+                let options = '<option value="">-- Seluruh Desa di Kecamatan (Default) --</option>';
                 data.forEach(desa => {
                     options += `<option value="${desa.id}">${desa.desa}</option>`;
                 });
                 desaSelect.innerHTML = options;
             })
             .catch(() => {
-                desaSelect.innerHTML = '<option value="">Gagal memuat desa</option>';
+                desaSelect.innerHTML = '<option value="">-- Seluruh Desa di Kecamatan (Default) --</option>';
             });
     });
 </script>

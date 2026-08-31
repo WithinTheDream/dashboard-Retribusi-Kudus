@@ -63,10 +63,15 @@
                                 @foreach($item->penugasanWilayahs as $penugasan)
                                     <div style="margin-bottom: 4px;">
                                         <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; display: inline-block;">
-                                            📍 Kec. {{ $penugasan->kecamatan?->kecamatan ?? '-' }} &bull; Desa {{ $penugasan->desa?->desa ?? '-' }}
+                                            📍 Kec. {{ $penugasan->kecamatan?->kecamatan ?? '-' }}
+                                            @if($penugasan->desa)
+                                                &bull; Desa {{ $penugasan->desa->desa }}
+                                            @else
+                                                &bull; <span style="font-weight: 600; color: #0284c7;">(Seluruh Desa)</span>
+                                            @endif
                                             @if($penugasan->rw)
                                                 (RW {{ $penugasan->rw }})
-                                            @else
+                                            @elseif($penugasan->desa)
                                                 <span style="color: #6b7280; font-size: 11px;">(Semua RW)</span>
                                             @endif
                                         </span>
