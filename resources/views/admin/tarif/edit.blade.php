@@ -4,23 +4,19 @@
 @section('page-title', 'Edit Tarif Retribusi')
 
 @section('content')
+<div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); max-width: 650px;">
+    <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 20px;">Form Edit Tarif</h3>
 
-    <h1>Edit Data Tarif</h1>
-
-    <form
-        action="{{ route('admin.tarif.update', $tarif) }}"
-        method="POST"
-        style="margin-top:20px;"
-    >
+    <form action="{{ route('admin.tarif.update', $tarif) }}" method="POST">
         @csrf
         @method('PUT')
 
-        <div style="margin-bottom:15px;">
-            <label style="font-weight: bold; margin-bottom: 5px; display: block;">Jenis Retribusi</label>
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold; margin-bottom: 5px; display: block; font-size: 14px;">Jenis Retribusi <span style="color:red;">*</span></label>
             <select
                 name="jenis_retribusi_id"
                 required
-                style="display:block; width:100%; padding:10px; border: 1px solid #d1d5db; border-radius: 6px; background: white;"
+                style="display:block; width:100%; padding:10px; border: 1px solid #d1d5db; border-radius: 6px; background: white; font-size: 14px;"
             >
                 <option value="">-- Pilih Jenis Retribusi --</option>
                 @foreach($jenisRetribusis as $jenis)
@@ -35,14 +31,15 @@
             @enderror
         </div>
 
-        <div style="margin-bottom:15px;">
-            <label style="font-weight: bold; margin-bottom: 5px; display: block;">Nominal Tarif (Rp)</label>
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold; margin-bottom: 5px; display: block; font-size: 14px;">Nominal Tarif (Rp) <span style="color:red;">*</span></label>
             <input
                 type="number"
                 name="nominal"
-                value="{{ old('nominal', $tarif->nominal) }}"
+                value="{{ old('nominal', (int)$tarif->nominal) }}"
                 required
-                style="display:block; width:100%; padding:10px; border: 1px solid #d1d5db; border-radius: 6px;"
+                min="0"
+                style="display:block; width:100%; padding:10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
             >
 
             @error('nominal')
@@ -50,14 +47,58 @@
             @enderror
         </div>
 
-        <button type="submit" style="background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;">
-            Update
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block; font-size: 14px;">Satuan Hitung</label>
+                <input
+                    type="text"
+                    name="satuan"
+                    value="{{ old('satuan', $tarif->satuan ?? 'Bulan') }}"
+                    placeholder="Contoh: Bulan, Hari, m3"
+                    style="display:block; width:100%; padding:10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                >
+                @error('satuan')
+                    <small style="color:red;">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block; font-size: 14px;">Tahun Periode</label>
+                <input
+                    type="number"
+                    name="periode"
+                    value="{{ old('periode', $tarif->periode ?? date('Y')) }}"
+                    min="2000"
+                    max="2100"
+                    style="display:block; width:100%; padding:10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+                >
+                @error('periode')
+                    <small style="color:red;">{{ $message }}</small>
+                @enderror
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                <input
+                    type="checkbox"
+                    name="is_aktif"
+                    value="1"
+                    {{ old('is_aktif', $tarif->is_aktif) ? 'checked' : '' }}
+                    style="width: 16px; height: 16px;"
+                >
+                <span style="font-weight: 500; color: #1f2937;">Jadikan Tarif Aktif</span>
+            </label>
+        </div>
+
+        <button type="submit" style="background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 14px;">
+            Update Tarif
         </button>
 
-        <a href="{{ route('admin.tarif.index') }}" style="margin-left: 10px; color: #4b5563; text-decoration: none;">
+        <a href="{{ route('admin.tarif.index') }}" style="margin-left: 10px; color: #4b5563; text-decoration: none; font-size: 14px;">
             Batal
         </a>
 
     </form>
-
+</div>
 @endsection
