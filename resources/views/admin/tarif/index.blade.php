@@ -17,12 +17,6 @@
         @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">

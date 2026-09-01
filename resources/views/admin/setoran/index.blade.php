@@ -12,12 +12,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; border: 1px solid #a7f3d0;">
-            ✓ {{ session('success') }}
-        </div>
-    @endif
-
     <!-- Filter Tabs Status Setoran -->
     <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 12px; flex-wrap: wrap;">
         <a href="{{ route('admin.setoran.index') }}" 
@@ -54,7 +48,7 @@
     </div>
 
     <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
             <thead>
                 <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                     <th style="padding: 12px; width: 50px;">No</th>
@@ -110,7 +104,7 @@
                         </td>
                         <td style="padding: 12px; vertical-align: top; text-align: center;">
                             <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap;">
-                                <a href="{{ route('admin.setoran.show', $item) }}" style="background: #f3f4f6; color: #1f2937; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: 500; font-size: 12px; border: 1px solid #d1d5db;">
+                                <a href="{{ route('admin.setoran.show', $item) }}" style="background: #f3f4f6; color: #1f2937; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: 600; font-size: 12px; border: 1px solid #d1d5db;">
                                     Rincian
                                 </a>
 

@@ -8,6 +8,9 @@
         @yield('title', 'Dashboard Admin - Retribusi Kudus')
     </title>
 
+    <!-- SweetAlert2 CSS & JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -492,6 +495,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // 1. Dropdown Accordion Toggle
         const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
 
         dropdownToggles.forEach(function (toggle) {
@@ -503,8 +507,94 @@
                 }
             });
         });
+
+        // 2. Intercept native onsubmit="return confirm(...)" with SweetAlert2
+        document.querySelectorAll("form").forEach(function (form) {
+            const onsubmitAttr = form.getAttribute("onsubmit");
+            if (onsubmitAttr && onsubmitAttr.includes("confirm(")) {
+                const match = onsubmitAttr.match(/confirm\(['"](.+?)['"]\)/);
+                const message = match ? match[1] : 'Apakah Anda yakin ingin melanjutkan tindakan ini?';
+
+                // Remove native onsubmit so browser confirm is not triggered
+                form.removeAttribute("onsubmit");
+
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Konfirmasi Tindakan',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            }
+        });
     });
 </script>
+
+<!-- SweetAlert2 Flash Notifications -->
+@if(session('success'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#2563eb',
+                timer: 2500,
+                timerProgressBar: true
+            });
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Terjadi Kesalahan!',
+                text: "{{ session('error') }}",
+                confirmButtonColor: '#ef4444'
+            });
+        });
+    </script>
+@endif
+
+@if(session('warning'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan!',
+                text: "{{ session('warning') }}",
+                confirmButtonColor: '#f59e0b'
+            });
+        });
+    </script>
+@endif
+
+@if(session('info'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'info',
+                title: 'Informasi',
+                text: "{{ session('info') }}",
+                confirmButtonColor: '#3b82f6'
+            });
+        });
+    </script>
+@endif
 
 @stack('scripts')
 

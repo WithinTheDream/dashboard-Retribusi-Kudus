@@ -10,17 +10,6 @@
     <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 20px;">Edit Nama Kecamatan</h3>
 
-        @if(session('success'))
-            <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 14px;">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div style="background: #fee2e2; color: #991b1b; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 14px;">
-                {{ session('error') }}
-            </div>
-        @endif
-
         <form action="{{ route('admin.wilayah.update', $kecamatan->id) }}" method="POST">
             @csrf
             @method('PUT')

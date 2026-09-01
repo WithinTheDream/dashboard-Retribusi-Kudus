@@ -8,19 +8,13 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Kecamatan dan Desa di Kabupaten Kudus</h3>
         @if(auth()->user()->hasPermission('wilayah.create'))
-        <a href="{{ route('admin.wilayah.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+        <a href="{{ route('admin.wilayah.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">
             + Tambah Kecamatan
         </a>
         @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                 <th style="padding: 12px; width: 60px;">No</th>

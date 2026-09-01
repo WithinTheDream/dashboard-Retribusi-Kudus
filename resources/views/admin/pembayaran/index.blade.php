@@ -8,24 +8,14 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Pembayaran Retribusi</h3>
 
-        <a href="{{ route('admin.pembayaran.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+        @if(auth()->user()->hasPermission('pembayaran.create'))
+        <a href="{{ route('admin.pembayaran.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">
             + Tambah
         </a>
+        @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div style="background: #fee2e2; color: #991b1b; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                 <th style="padding: 12px; width: 60px;">No</th>
@@ -42,31 +32,35 @@
             @forelse($pembayarans as $index => $item)
                 <tr style="border-bottom: 1px solid #e5e7eb;">
                     <td style="padding: 12px;">{{ $index + 1 }}</td>
-                    <td style="padding: 12px; font-weight: bold;">{{ $item->nomor_pembayaran }}</td>
-                    <td style="padding: 12px;">{{ $item->tagihan->nomor_tagihan ?? '-' }}</td>
-                    <td style="padding: 12px;">{{ $item->tagihan->wajibRetribusi->nama_lengkap ?? '-' }}</td>
+                    <td style="padding: 12px; font-weight: bold; color: #1e293b;">{{ $item->nomor_pembayaran }}</td>
+                    <td style="padding: 12px; color: #2563eb; font-weight: 500;">{{ $item->tagihan->nomor_tagihan ?? '-' }}</td>
+                    <td style="padding: 12px; color: #334155;">{{ $item->tagihan->wajibRetribusi->nama_lengkap ?? '-' }}</td>
                     <td style="padding: 12px; color: #059669; font-weight: bold;">
                         Rp {{ number_format($item->nominal_bayar, 0, ',', '.') }}
                     </td>
                     <td style="padding: 12px; text-transform: capitalize;">{{ $item->metode_pembayaran }}</td>
-                    <td style="padding: 12px;">{{ $item->waktu_bayar ? \Carbon\Carbon::parse($item->waktu_bayar)->format('d/m/Y H:i') : '-' }}</td>
+                    <td style="padding: 12px; color: #64748b;">{{ $item->waktu_bayar ? \Carbon\Carbon::parse($item->waktu_bayar)->format('d/m/Y H:i') : '-' }}</td>
                     <td style="padding: 12px; text-align: center;">
-                        <a href="{{ route('admin.pembayaran.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">
+                        @if(auth()->user()->hasPermission('pembayaran.update'))
+                        <a href="{{ route('admin.pembayaran.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 600;">
                             Edit
                         </a>
+                        @endif
 
+                        @if(auth()->user()->hasPermission('pembayaran.delete'))
                         <form action="{{ route('admin.pembayaran.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pembayaran ini?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; font-size: 14px;">
+                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px;">
                                 Hapus
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" style="padding: 12px; text-align: center; color: #6b7280;">
+                    <td colspan="8" style="padding: 20px; text-align: center; color: #6b7280;">
                         Belum ada data pembayaran.
                     </td>
                 </tr>

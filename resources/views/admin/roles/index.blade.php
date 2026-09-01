@@ -9,24 +9,13 @@
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Role Sistem</h3>
 
         @if(auth()->user()->hasPermission('roles.update'))
-        <a href="{{ route('admin.roles.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+        <a href="{{ route('admin.roles.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">
             + Tambah Role Baru
         </a>
         @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div style="background: #fee2e2; color: #991b1b; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                 <th style="padding: 12px; width: 60px;">No</th>
@@ -41,24 +30,24 @@
             @foreach($roles as $index => $item)
                 <tr style="border-bottom: 1px solid #e5e7eb;">
                     <td style="padding: 12px;">{{ $index + 1 }}</td>
-                    <td style="padding: 12px; font-weight: bold;">
+                    <td style="padding: 12px; font-weight: bold; color: #1e293b;">
                         {{ $item->display_name }}
                         @if($item->is_system)
-                        <span style="background: #e5e7eb; color: #4b5563; font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-left: 5px;">Sistem</span>
+                        <span style="background: #e2e8f0; color: #475569; font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-left: 5px; font-weight: 600;">Sistem</span>
                         @endif
                     </td>
-                    <td style="padding: 12px; color: #6b7280;">{{ $item->name }}</td>
-                    <td style="padding: 12px;">{{ $item->users_count }} User</td>
-                    <td style="padding: 12px;">{{ $item->permissions_count }} Akses</td>
+                    <td style="padding: 12px; color: #64748b;"><code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">{{ $item->name }}</code></td>
+                    <td style="padding: 12px; color: #334155;">{{ $item->users_count }} User</td>
+                    <td style="padding: 12px; color: #334155;">{{ $item->permissions_count }} Akses</td>
                     <td style="padding: 12px; text-align: center;">
                         @if(auth()->user()->hasPermission('roles.update'))
-                        <a href="{{ route('admin.roles.edit', $item->id) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">Edit Akses</a>
+                        <a href="{{ route('admin.roles.edit', $item->id) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 600;">Edit Akses</a>
                         
                         @if(!$item->is_system)
                         <form action="{{ route('admin.roles.destroy', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus role ini?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; font-size: 14px;">Hapus</button>
+                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px;">Hapus</button>
                         </form>
                         @endif
                         @endif

@@ -8,24 +8,14 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin: 0;">Daftar Pengajuan Wajib Retribusi</h3>
 
+        @if(auth()->user()->hasPermission('pengajuan.create'))
         <a href="{{ route('admin.pengajuan.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">
             + Tambah
         </a>
+        @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div style="background: #fee2e2; color: #991b1b; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                 <th style="padding: 12px; width: 50px;">No</th>
@@ -43,10 +33,10 @@
                 <tr style="border-bottom: 1px solid #e5e7eb;">
                     <td style="padding: 12px;">{{ $pengajuans->firstItem() + $index }}</td>
                     <td style="padding: 12px; font-weight: bold; font-family: monospace; color: #2563eb;">{{ $item->nomor_pengajuan }}</td>
-                    <td style="padding: 12px;">{{ $item->nama_lengkap }}</td>
-                    <td style="padding: 12px;">{{ $item->nik }}</td>
-                    <td style="padding: 12px;">{{ $item->nama_usaha ?? '-' }}</td>
-                    <td style="padding: 12px;">{{ $item->jenisRetribusi->nama ?? '-' }}</td>
+                    <td style="padding: 12px; font-weight: 600; color: #1e293b;">{{ $item->nama_lengkap }}</td>
+                    <td style="padding: 12px; color: #475569;">{{ $item->nik }}</td>
+                    <td style="padding: 12px; color: #475569;">{{ $item->nama_usaha ?? '-' }}</td>
+                    <td style="padding: 12px; color: #475569;">{{ $item->jenisRetribusi->nama ?? '-' }}</td>
                     <td style="padding: 12px; text-align: center;">
                         @php
                             $badgeStyles = [
@@ -63,19 +53,23 @@
                         </span>
                     </td>
                     <td style="padding: 12px; text-align: center; white-space: nowrap; font-size: 14px;">
-                        <a href="{{ route('admin.pengajuan.show', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 12px; font-weight: 500; font-size: 14px;">
+                        <a href="{{ route('admin.pengajuan.show', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 12px; font-weight: 600; font-size: 14px;">
                             Lihat
                         </a>
-                        <a href="{{ route('admin.pengajuan.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500; font-size: 14px;">
+                        @if(auth()->user()->hasPermission('pengajuan.update') || auth()->user()->hasPermission('pengajuan.verify'))
+                        <a href="{{ route('admin.pengajuan.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 600; font-size: 14px;">
                             Edit
                         </a>
+                        @endif
+                        @if(auth()->user()->hasPermission('pengajuan.delete'))
                         <form action="{{ route('admin.pengajuan.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; font-size: 14px; padding: 0; font-family: inherit;">
+                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px; padding: 0; font-family: inherit;">
                                 Hapus
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @empty

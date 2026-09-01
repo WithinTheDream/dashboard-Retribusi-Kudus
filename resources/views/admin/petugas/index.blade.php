@@ -20,20 +20,8 @@
         @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; border: 1px solid #a7f3d0;">
-            ✓ {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div style="background: #fee2e2; color: #991b1b; padding: 12px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; border: 1px solid #fecaca;">
-            ✕ {{ session('error') }}
-        </div>
-    @endif
-
     <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
             <thead>
                 <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                     <th style="padding: 12px; width: 50px;">No</th>
@@ -85,7 +73,7 @@
                         </td>
                         <td style="padding: 12px; text-align: center; vertical-align: top;">
                             @if(auth()->user()->hasPermission('petugas.update'))
-                                <a href="{{ route('admin.petugas.edit', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 12px; font-weight: 500; font-size: 13px;">
+                                <a href="{{ route('admin.petugas.edit', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 12px; font-weight: 600; font-size: 13px;">
                                     Edit
                                 </a>
                             @endif
@@ -94,7 +82,7 @@
                                 <form action="{{ route('admin.petugas.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus petugas ini beserta seluruh penugasan wilayahnya?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; font-size: 13px;">
+                                    <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 13px;">
                                         Hapus
                                     </button>
                                 </form>

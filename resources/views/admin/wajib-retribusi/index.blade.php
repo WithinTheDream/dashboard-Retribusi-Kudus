@@ -8,25 +8,13 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Wajib Retribusi</h3>
         @if(auth()->user()->hasPermission('wajib_retribusi.create'))
-        <a href="{{ route('admin.wajib-retribusi.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px;">
+        <a href="{{ route('admin.wajib-retribusi.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">
             + Tambah
         </a>
         @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div style="background: #fee2e2; color: #991b1b; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                 <th style="padding: 12px; width: 60px;">No</th>
@@ -43,32 +31,32 @@
             @forelse($wajibRetribusis as $index => $item)
                 <tr style="border-bottom: 1px solid #e5e7eb;">
                     <td style="padding: 12px;">{{ ($wajibRetribusis->currentPage() - 1) * $wajibRetribusis->perPage() + $index + 1 }}</td>
-                    <td style="padding: 12px; font-weight: bold;">{{ $item->kode }}</td>
+                    <td style="padding: 12px; font-weight: bold; color: #1e293b;">{{ $item->kode }}</td>
                     <td style="padding: 12px;">{{ $item->nama_lengkap }}</td>
-                    <td style="padding: 12px;">{{ $item->nik }}</td>
-                    <td style="padding: 12px;">{{ $item->nama_usaha ?? '-' }}</td>
-                    <td style="padding: 12px;">{{ $item->jenisRetribusi->nama ?? '-' }}</td>
+                    <td style="padding: 12px; color: #475569;">{{ $item->nik }}</td>
+                    <td style="padding: 12px; color: #475569;">{{ $item->nama_usaha ?? '-' }}</td>
+                    <td style="padding: 12px; color: #475569;">{{ $item->jenisRetribusi->nama ?? '-' }}</td>
                     <td style="padding: 12px;">
                         @if($item->status_aktif)
-                            <span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Aktif</span>
+                            <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Aktif</span>
                         @else
-                            <span style="background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Nonaktif</span>
+                            <span style="background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Nonaktif</span>
                         @endif
                     </td>
                     <td style="padding: 12px; text-align: center;">
                         @if(auth()->user()->hasPermission('wajib_retribusi.view'))
-                        <a href="{{ route('admin.wajib-retribusi.show', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 12px; font-weight: 500;">Detail</a>
+                        <a href="{{ route('admin.wajib-retribusi.show', $item) }}" style="color: #2563eb; text-decoration: none; margin-right: 10px; font-weight: 600;">Detail</a>
                         @endif
 
                         @if(auth()->user()->hasPermission('wajib_retribusi.update'))
-                        <a href="{{ route('admin.wajib-retribusi.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500;">Edit</a>
+                        <a href="{{ route('admin.wajib-retribusi.edit', $item) }}" style="color: #d97706; text-decoration: none; margin-right: 10px; font-weight: 600;">Edit</a>
                         @endif
 
                         @if(auth()->user()->hasPermission('wajib_retribusi.delete'))
-                        <form action="{{ route('admin.wajib-retribusi.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                        <form action="{{ route('admin.wajib-retribusi.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data wajib retribusi ini?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; font-size: 14px;">Hapus</button>
+                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px;">Hapus</button>
                         </form>
                         @endif
                     </td>

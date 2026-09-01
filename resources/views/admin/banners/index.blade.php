@@ -8,18 +8,14 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="font-size: 18px; font-weight: bold; color: #1f2937;">Daftar Banner Beranda Mobile</h3>
 
+        @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermission('banner.create'))
         <a href="{{ route('admin.banners.create') }}" style="background: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500;">
             + Tambah Banner
         </a>
+        @endif
     </div>
 
-    @if(session('success'))
-        <div style="background: #d1fae5; color: #065f46; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
             <tr style="background: #f9fafb; border-bottom: 2px solid #e5e7eb;">
                 <th style="padding: 12px; width: 50px;">No</th>
@@ -46,20 +42,20 @@
                     <td style="padding: 12px; font-weight: 600;">{{ $banner->urutan }}</td>
                     <td style="padding: 12px;">
                         @if($banner->is_active)
-                            <span style="background: #d1fae5; color: #065f46; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">Aktif</span>
+                            <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Aktif</span>
                         @else
-                            <span style="background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">Nonaktif</span>
+                            <span style="background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Nonaktif</span>
                         @endif
                     </td>
                     <td style="padding: 12px; text-align: center;">
-                        <a href="{{ route('admin.banners.edit', $banner) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 500; font-size: 14px;">
+                        <a href="{{ route('admin.banners.edit', $banner) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 600; font-size: 14px;">
                             Edit
                         </a>
 
                         <form action="{{ route('admin.banners.destroy', $banner) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus banner ini?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; font-size: 14px;">
+                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px;">
                                 Hapus
                             </button>
                         </form>
@@ -67,7 +63,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="padding: 16px; text-align: center; color: #6b7280;">
+                    <td colspan="6" style="padding: 20px; text-align: center; color: #6b7280;">
                         Belum ada banner slideshow yang diunggah.
                     </td>
                 </tr>
