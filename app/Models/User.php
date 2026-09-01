@@ -45,11 +45,20 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->isSuperAdmin()
+        if ($this->isSuperAdmin()
             || $this->hasRole('admin')
             || $this->hasRole('admin_dinas')
             || $this->isBendahara()
-            || $this->isPimpinan();
+            || $this->isPimpinan()) {
+            return true;
+        }
+
+        // Custom administrative role support (any role other than citizen 'user' and 'petugas')
+        if ($this->roleRelation && !in_array($this->roleRelation->name, ['user', 'petugas'])) {
+            return true;
+        }
+
+        return false;
     }
 
     public function isSuperAdmin(): bool
@@ -97,7 +106,18 @@ class User extends Authenticatable
         if ($this->isSuperAdmin()) {
             return true;
         }
-        return $this->roleRelation?->hasPermission($permission) ?? false;
+
+        if ($this->roleRelation) {
+            return $this->roleRelation->hasPermission($permission);
+        }
+
+        // Fallback jika role_id belum diset tetapi kolom role berisi nama role
+        if (!empty($this->role)) {
+            $role = Role::where('name', $this->role)->first();
+            return $role?->hasPermission($permission) ?? false;
+        }
+
+        return false;
     }
 
     public function hasRole(string $role): bool

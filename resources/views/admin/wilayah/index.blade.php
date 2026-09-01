@@ -48,6 +48,9 @@
                             <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 500; padding: 0;">Hapus</button>
                         </form>
                         @endif
+                        @if(!auth()->user()->hasPermission('wilayah.update') && !auth()->user()->hasPermission('wilayah.delete'))
+                            <span style="color: #9ca3af;">-</span>
+                        @endif
                     </td>
                 </tr>
             @empty

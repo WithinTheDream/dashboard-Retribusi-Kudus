@@ -48,17 +48,25 @@
                         @endif
                     </td>
                     <td style="padding: 12px; text-align: center;">
-                        <a href="{{ route('admin.banners.edit', $banner) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 600; font-size: 14px;">
-                            Edit
-                        </a>
+                        @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermission('banner.update'))
+                            <a href="{{ route('admin.banners.edit', $banner) }}" style="color: #d97706; text-decoration: none; margin-right: 12px; font-weight: 600; font-size: 14px;">
+                                Edit
+                            </a>
+                        @endif
 
-                        <form action="{{ route('admin.banners.destroy', $banner) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus banner ini?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px;">
-                                Hapus
-                            </button>
-                        </form>
+                        @if(auth()->user()->isSuperAdmin() || auth()->user()->hasPermission('banner.delete'))
+                            <form action="{{ route('admin.banners.destroy', $banner) }}" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus banner ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                    Hapus
+                                </button>
+                            </form>
+                        @endif
+
+                        @if(!auth()->user()->isSuperAdmin() && !auth()->user()->hasPermission('banner.update') && !auth()->user()->hasPermission('banner.delete'))
+                            <span style="color: #9ca3af;">-</span>
+                        @endif
                     </td>
                 </tr>
             @empty

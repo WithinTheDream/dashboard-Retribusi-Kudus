@@ -72,6 +72,10 @@
                             </button>
                         </form>
                         @endif
+
+                        @if(!auth()->user()->hasPermission('tarif.update') && !auth()->user()->hasPermission('tarif.delete'))
+                            <span style="color: #9ca3af;">-</span>
+                        @endif
                     </td>
                 </tr>
             @empty

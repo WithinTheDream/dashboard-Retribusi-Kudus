@@ -71,6 +71,10 @@
                             </button>
                         </form>
                         @endif
+
+                        @if(!auth()->user()->hasPermission('tagihan.update') && !auth()->user()->hasPermission('tagihan.delete'))
+                            <span style="color: #9ca3af;">-</span>
+                        @endif
                     </td>
                 </tr>
             @empty

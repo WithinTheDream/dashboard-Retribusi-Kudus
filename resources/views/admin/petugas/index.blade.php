@@ -87,6 +87,10 @@
                                     </button>
                                 </form>
                             @endif
+
+                            @if(!auth()->user()->hasPermission('petugas.update') && !auth()->user()->hasPermission('petugas.delete'))
+                                <span style="color: #9ca3af;">-</span>
+                            @endif
                         </td>
                     </tr>
                 @empty

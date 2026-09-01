@@ -106,6 +106,11 @@ Route::middleware(['auth', 'admin'])
 
         // 7. Laporan: Rekap Tagihan & Pembayaran
         Route::get(
+            'laporan/pdf',
+            [LaporanController::class, 'exportPdf']
+        )->name('laporan.pdf');
+
+        Route::get(
             'laporan',
             [LaporanController::class, 'index']
         )->name('laporan.index');

@@ -50,6 +50,8 @@
                             <button type="submit" style="background: none; border: none; color: #dc2626; cursor: pointer; font-weight: 600; font-size: 14px;">Hapus</button>
                         </form>
                         @endif
+                        @else
+                        <span style="color: #9ca3af;">-</span>
                         @endif
                     </td>
                 </tr>

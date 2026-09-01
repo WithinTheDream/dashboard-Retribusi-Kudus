@@ -56,6 +56,10 @@
                             </button>
                         </form>
                         @endif
+
+                        @if(!auth()->user()->hasPermission('pembayaran.update') && !auth()->user()->hasPermission('pembayaran.delete'))
+                            <span style="color: #9ca3af;">-</span>
+                        @endif
                     </td>
                 </tr>
             @empty

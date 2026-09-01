@@ -45,6 +45,10 @@
                             </button>
                         </form>
                         @endif
+
+                        @if(!auth()->user()->hasPermission('jenis_retribusi.update') && !auth()->user()->hasPermission('jenis_retribusi.delete'))
+                            <span style="color: #9ca3af;">-</span>
+                        @endif
                     </td>
                 </tr>
             @empty
