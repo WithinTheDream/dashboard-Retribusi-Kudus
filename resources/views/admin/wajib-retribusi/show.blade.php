@@ -36,6 +36,14 @@
             <td style="padding: 12px; color: #1f2937;">{{ $wajibRetribusi->nama_usaha ?? '-' }}</td>
         </tr>
         <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold; color: #374151;">NPWP</td>
+            <td style="padding: 12px; color: #1f2937;">{{ $wajibRetribusi->npwp ?? '-' }}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 12px; font-weight: bold; color: #374151;">NIB</td>
+            <td style="padding: 12px; color: #1f2937;">{{ $wajibRetribusi->nib ?? '-' }}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e5e7eb;">
             <td style="padding: 12px; font-weight: bold; color: #374151;">Jenis Retribusi</td>
             <td style="padding: 12px; color: #1f2937;">{{ $wajibRetribusi->jenisRetribusi->kode ?? '-' }} - {{ $wajibRetribusi->jenisRetribusi->nama ?? '-' }}</td>
         </tr>

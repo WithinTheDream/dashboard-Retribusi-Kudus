@@ -55,6 +55,26 @@
                 <span style="font-size: 12px; color: #6b7280; display: block; margin-bottom: 2px;">Wilayah</span>
                 <strong style="color: #1f2937; font-size: 15px;">{{ $pengajuan->desa->desa ?? '-' }}, Kec. {{ $pengajuan->kecamatan->kecamatan ?? '-' }}</strong>
             </div>
+
+            @if($pengajuan->nama_usaha || $pengajuan->npwp || $pengajuan->nib)
+            <div style="grid-column: 1 / -1; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px 18px;">
+                <h5 style="margin: 0 0 10px 0; color: #166534; font-size: 13px; font-weight: 700;">🏢 Informasi Objek Usaha</h5>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+                    <div>
+                        <span style="font-size: 12px; color: #15803d; display: block;">Nama Toko / Usaha</span>
+                        <strong style="color: #14532d; font-size: 14px;">{{ $pengajuan->nama_usaha ?? '-' }}</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 12px; color: #15803d; display: block;">NPWP (Opsional)</span>
+                        <strong style="color: #14532d; font-size: 14px;">{{ $pengajuan->npwp ?? '-' }}</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 12px; color: #15803d; display: block;">NIB (Opsional)</span>
+                        <strong style="color: #14532d; font-size: 14px;">{{ $pengajuan->nib ?? '-' }}</strong>
+                    </div>
+                </div>
+            </div>
+            @endif
             <div style="grid-column: 1 / -1;">
                 <span style="font-size: 12px; color: #6b7280; display: block; margin-bottom: 2px;">Alamat Lengkap</span>
                 <strong style="color: #1f2937; font-size: 15px;">{{ $pengajuan->alamat }} (RT {{ $pengajuan->rt }} / RW {{ $pengajuan->rw }})</strong>
@@ -90,12 +110,12 @@
                 @foreach($pengajuan->dokumen as $dok)
                     <div style="border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; text-align: center;">
                         <span style="font-size: 12px; font-weight: 600; color: #4b5563; display: block; margin-bottom: 8px;">{{ $dok->jenis_dokumen }}</span>
-                        @if(Str::endsWith($dok->file_path, ['.jpg', '.jpeg', '.png']))
-                            <a href="{{ asset($dok->file_path) }}" target="_blank">
-                                <img src="{{ asset($dok->file_path) }}" alt="{{ $dok->jenis_dokumen }}" style="max-width: 100%; max-height: 120px; object-fit: contain; border-radius: 4px;">
+                        @if(Str::endsWith(strtolower($dok->file_path), ['.jpg', '.jpeg', '.png', '.webp']))
+                            <a href="{{ $dok->file_url }}" target="_blank">
+                                <img src="{{ $dok->file_url }}" alt="{{ $dok->jenis_dokumen }}" style="max-width: 100%; max-height: 140px; object-fit: contain; border-radius: 4px; border: 1px solid #f1f5f9;">
                             </a>
                         @else
-                            <a href="{{ asset($dok->file_path) }}" target="_blank" style="display: inline-block; padding: 8px 14px; background: #f3f4f6; color: #2563eb; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500;">
+                            <a href="{{ $dok->file_url }}" target="_blank" style="display: inline-block; padding: 8px 14px; background: #f3f4f6; color: #2563eb; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 500;">
                                 📄 Lihat Dokumen (PDF)
                             </a>
                         @endif

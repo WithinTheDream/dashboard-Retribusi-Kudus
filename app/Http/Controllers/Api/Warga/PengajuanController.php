@@ -18,6 +18,8 @@ class PengajuanController extends Controller
             'nik'                => ['required', 'string', 'size:16'],
             'nama_lengkap'       => ['required', 'string', 'max:255'],
             'nama_usaha'         => ['nullable', 'string', 'max:255'],
+            'npwp'               => ['nullable', 'string', 'max:50'],
+            'nib'                => ['nullable', 'string', 'max:50'],
             'jenis_retribusi_id' => ['required', 'exists:jenis_retribusis,id'],
             'kecamatan_id'       => ['required', 'exists:kecamatans,id'],
             'desa_id'            => ['required', 'exists:desas,id'],
@@ -58,6 +60,8 @@ class PengajuanController extends Controller
                 'nik'                => $validated['nik'],
                 'nama_lengkap'       => $validated['nama_lengkap'],
                 'nama_usaha'         => $validated['nama_usaha'] ?? null,
+                'npwp'               => $validated['npwp'] ?? null,
+                'nib'                => $validated['nib'] ?? null,
                 'kecamatan_id'       => $validated['kecamatan_id'],
                 'desa_id'            => $validated['desa_id'],
                 'alamat'             => $validated['alamat'],
@@ -76,7 +80,7 @@ class PengajuanController extends Controller
                     DokumenPengajuan::create([
                         'pengajuan_id'  => $pengajuan->id,
                         'jenis_dokumen' => is_string($jenis) ? $jenis : 'LAMPIRAN',
-                        'file_path'     => Storage::url($path),
+                        'file_path'     => 'storage/' . $path,
                     ]);
                 }
             }

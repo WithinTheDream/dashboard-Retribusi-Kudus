@@ -48,7 +48,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
             <div>
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">Nama Usaha (Opsional)</label>
-                <input type="text" name="nama_usaha" value="{{ old('nama_usaha') }}" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                <input type="text" name="nama_usaha" value="{{ old('nama_usaha') }}" placeholder="Isi jika objek berupa toko/tempat usaha" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                 @error('nama_usaha')<small style="color: red;">{{ $message }}</small>@enderror
             </div>
 
@@ -56,6 +56,20 @@
                 <label style="font-weight: bold; margin-bottom: 5px; display: block;">Nomor HP</label>
                 <input type="text" name="no_hp" value="{{ old('no_hp') }}" required placeholder="Contoh: 08123456789" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
                 @error('no_hp')<small style="color: red;">{{ $message }}</small>@enderror
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">NPWP (Opsional)</label>
+                <input type="text" name="npwp" value="{{ old('npwp') }}" placeholder="Nomor Pokok Wajib Pajak (Opsional)" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                @error('npwp')<small style="color: red;">{{ $message }}</small>@enderror
+            </div>
+
+            <div>
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">NIB (Opsional)</label>
+                <input type="text" name="nib" value="{{ old('nib') }}" placeholder="Nomor Induk Berusaha (Opsional)" style="display: block; width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px;">
+                @error('nib')<small style="color: red;">{{ $message }}</small>@enderror
             </div>
         </div>
 
